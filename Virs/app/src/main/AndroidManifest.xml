@@ -16,6 +16,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".PoemFeed"
+            android:label="@string/title_activity_poem_feed"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".DemoPoem"></activity>
     </application>
 
 </manifest>

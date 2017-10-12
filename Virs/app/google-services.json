@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "528607761399",
+    "firebase_url": "https://virs-7a1fe.firebaseio.com",
+    "project_id": "virs-7a1fe",
+    "storage_bucket": "virs-7a1fe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:528607761399:android:b1cd67d4f42da18c",
+        "android_client_info": {
+          "package_name": "com.example.gheggie.virs"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "528607761399-1br8remqih8m9jrnejjl204feprvv9b5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.gheggie.virs",
+            "certificate_hash": "0147e7cad9409b90dd487ee61550ea94edc4d239"
+          }
+        },
+        {
+          "client_id": "528607761399-vq1ri1v3k6brptf8hv1dhbfvfumpinih.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBIy0eebn_-Avxcs35bLSIM8Pklnqdd0mA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "528607761399-vq1ri1v3k6brptf8hv1dhbfvfumpinih.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
