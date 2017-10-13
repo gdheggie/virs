@@ -2,7 +2,9 @@
 <resources>
     <color name="blackColor">#000</color>
     <color name="whiteColor">#FFFFFF</color>
-    <color name="virsPurple">#7D5BA6</color>
+    <color name="virsPurple">#7d5ba6</color>
     <color name="editTextbackground">#bbFFFFFF</color>
+    <color name="preview_poem">#888484</color>
     <color name="twitterColor">#1DA1F2</color>
+    <color name="searchBarColor">#DEDBDB</color>
 </resources>

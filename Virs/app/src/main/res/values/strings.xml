@@ -12,4 +12,20 @@
     <string name="confirm_pw">re-enter password</string>
     <string name="already_have_an_account_sign_in_here">Already have an account? Sign In Here</string>
     <string name="title_activity_poem_feed">PoemFeed</string>
+    <string name="search_poems">Search Poems...</string>
+    <string name="sign_out">sign out</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="poems">Poems</string>
+    <string name="events">Events</string>
+    <string name="profile">Profile</string>
+    <string name="share">Share</string>
+    <string name="shareicon">share_icon</string>
+    <string name="snapicon">snap_icon</string>
+    <string name="_43_snaps">43 Snaps</string>
+    <string name="poetpic">poet_pic</string>
+    <string name="misreadpoet">misreadpoet</string>
+    <string name="chev">chevron</string>
+    <string name="roses_are_red_in_the_sky_violets_are_blue_in_the_ocean_come_to_me_where_i_lay_down">roses are red in the sky violets are blue in the ocean come to me where i lay down ...</string>
 </resources>

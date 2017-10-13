@@ -7,9 +7,9 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-public class VirsUtils {
+class VirsUtils {
 
-    private static final String FILE_NAME = "gait.txt";
+    private static final String FILE_NAME = "poet.txt";
 
     static void savePoet(Context context, Poet poet) {
 
@@ -23,7 +23,7 @@ public class VirsUtils {
         }
     }
 
-    static Poet loadGait(Context context) {
+    static Poet loadPoet(Context context) {
         Poet poet = null;
 
         try {

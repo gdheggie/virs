@@ -22,11 +22,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.ArrayList;
 
 public class RegisterFragment extends Fragment{
 
@@ -36,7 +32,6 @@ public class RegisterFragment extends Fragment{
     private EditText passwordText2;
     private EditText confirmPasswordText;
     private ProgressDialog progressDialog;
-    private DatabaseReference databaseReference;
 
     public static RegisterFragment newInstance() {
         return new RegisterFragment();
@@ -52,7 +47,6 @@ public class RegisterFragment extends Fragment{
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         firebaseAuth = FirebaseAuth.getInstance();
-        databaseReference = FirebaseDatabase.getInstance().getReference();
 
         username2 = (EditText) getActivity().findViewById(R.id.username_field2);
         passwordText2 = (EditText)getActivity().findViewById(R.id.password_field2);
@@ -109,14 +103,6 @@ public class RegisterFragment extends Fragment{
             confirmPasswordText.setText(null);
             Toast.makeText(getActivity(), "Passwords did not match", Toast.LENGTH_SHORT).show();
         }else {
-            // save user to database & local storage
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if(user != null) {
-                ArrayList<String> poems = new ArrayList<>();
-                Poet newPoet = new Poet(username, user.getUid(),poems);
-                databaseReference.child("Users").child(user.getUid()).push().setValue(newPoet);
-                VirsUtils.savePoet(getActivity(), newPoet);
-            }
             //show progress dialog
             progressDialog.setMessage("Registering User...");
             progressDialog.show();
@@ -132,7 +118,7 @@ public class RegisterFragment extends Fragment{
                             if (task.isSuccessful()) {
                                 //Go To Poem Feed
                                 removeFragment();
-                                startActivity(new Intent(getActivity(), PoemFeed.class));
+                                startActivity(new Intent(getActivity(), MainActivity.class));
                             } else {
                                 Toast.makeText(getActivity(),
                                         "Registration Unsuccessful. Try Again!",
@@ -140,7 +126,6 @@ public class RegisterFragment extends Fragment{
                                 username2.setText(null);
                                 passwordText2.setText(null);
                                 confirmPasswordText.setText(null);
-
                             }
                         }
                     });

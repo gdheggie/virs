@@ -1,6 +1,8 @@
 package com.example.gheggie.virs;
 
-class Poem {
+import java.io.Serializable;
+
+class Poem implements Serializable {
 
     private final String title;
     private final String poem;

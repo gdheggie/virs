@@ -1,9 +1,9 @@
 package com.example.gheggie.virs;
 
-
+import java.io.Serializable;
 import java.util.ArrayList;
 
-class Poet {
+class Poet implements Serializable {
 
     private final String username;
     private final String userid;

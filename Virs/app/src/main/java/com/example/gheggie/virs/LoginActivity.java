@@ -37,8 +37,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Button twitterSignIn = (Button)findViewById(R.id.twitter_button);
         signin.setOnClickListener(this);
         twitterSignIn.setOnClickListener(this);
-        usernameText = (EditText)findViewById(R.id.username_field2);
-        passwordText = (EditText)findViewById(R.id.password_field2);
+        usernameText = (EditText)findViewById(R.id.username_field);
+        passwordText = (EditText)findViewById(R.id.password_field);
         TextView signUpText = (TextView) findViewById(R.id.sign_up_here);
         signUpText.setOnClickListener(this);
         progressDialog = new ProgressDialog(this);
@@ -46,7 +46,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         if(firebaseAuth.getCurrentUser() != null) {
             // Start Poem Feed
-            startActivity(new Intent(LoginActivity.this, PoemFeed.class));
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
         }
     }
 
@@ -108,7 +108,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             progressDialog.dismiss();
                             if (task.isSuccessful()) {
                                 // Start Poem Feed
-                                startActivity(new Intent(LoginActivity.this, PoemFeed.class));
+                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
                             } else {
                                 Toast.makeText(LoginActivity.this,
                                         "Login Failed. Try Again",
