@@ -118,7 +118,7 @@ public class RegisterFragment extends Fragment{
                             if (task.isSuccessful()) {
                                 //Go To Poem Feed
                                 removeFragment();
-                                startActivity(new Intent(getActivity(), MainActivity.class));
+                                startActivity(new Intent(getActivity(), CropActivity.class));
                             } else {
                                 Toast.makeText(getActivity(),
                                         "Registration Unsuccessful. Try Again!",

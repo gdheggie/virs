@@ -35,4 +35,8 @@
     <string name="live_stream">live stream</string>
     <string name="snaps">Snaps</string>
     <string name="snapped">Snapped</string>
+    <string name="finish">Finish</string>
+    <string name="crop_photo">Crop Photo</string>
+    <string name="select">Select</string>
+    <string name="profile_photo">Profile Photo</string>
 </resources>

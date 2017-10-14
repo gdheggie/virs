@@ -1,6 +1,5 @@
 package com.example.gheggie.virs;
 
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -21,7 +20,6 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
                 return new PoemFeedFragment();
             case 1:
                 return new EventFragment();
-
             case 2:
                 return new UserProfileFragment();
             default:

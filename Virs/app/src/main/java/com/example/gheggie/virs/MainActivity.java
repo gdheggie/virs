@@ -25,53 +25,30 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private DatabaseReference databaseRef;
-    private ArrayList<String> poems = new ArrayList<>();
     private Poet newPoet;
     private EditText search;
     private Toolbar searchBar;
     private Toolbar poetBar;
     private ImageButton liveStream;
     private ImageButton writePoem;
-    private ImageButton signOut;
     private TextView poetName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        databaseRef = FirebaseDatabase.getInstance().getReference();
         newPoet = VirsUtils.loadPoet(this);
-        saveUser();
         searchBar =(Toolbar)findViewById(R.id.search_toolbar);
         poetBar = (Toolbar)findViewById(R.id.poet_screen_title);
         search = (EditText)findViewById(R.id.poem_search);
         liveStream = (ImageButton)findViewById(R.id.live_stream);
         writePoem = (ImageButton)findViewById(R.id.write_poem);
-        signOut = (ImageButton)findViewById(R.id.sign_out);
+        ImageButton signOut = (ImageButton)findViewById(R.id.sign_out);
         poetName = (TextView)findViewById(R.id.poet_title);
         writePoem.setOnClickListener(mainActions);
         liveStream.setOnClickListener(mainActions);
         signOut.setOnClickListener(mainActions);
         setupTabViews();
-    }
-
-    private void saveUser() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        // save user to database & local storage
-        if (user != null) {
-            String userEmail = user.getEmail();
-            if (userEmail != null) {
-                if(newPoet == null) {
-                    String[] username = userEmail.split("@");
-                    poems = new ArrayList<>();
-                    newPoet = new Poet(username[0].toLowerCase(), user.getUid(), poems);
-                    databaseRef.child("Users").child(user.getUid()).setValue(newPoet);
-                    VirsUtils.savePoet(this, newPoet);
-                }
-            }
-        }
     }
 
     private final View.OnClickListener mainActions = new View.OnClickListener() {
@@ -100,11 +77,10 @@ public class MainActivity extends AppCompatActivity {
                 (getSupportFragmentManager(), tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
-
                 switch (tab.getPosition()) {
                     case 0:
                         tab.setIcon(R.drawable.bookpurple);

@@ -10,7 +10,7 @@
         android:id="@+id/poet_image"
         android:layout_width="84dp"
         android:layout_height="84dp"
-        app:civ_border_width="2dp"
+        app:civ_border_width="0.5dp"
         app:civ_border_color="@color/virsPurple"
         android:src="@drawable/virsicon"
         app:layout_constraintTop_toTopOf="parent"
