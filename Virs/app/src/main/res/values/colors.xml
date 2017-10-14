@@ -7,4 +7,5 @@
     <color name="preview_poem">#888484</color>
     <color name="twitterColor">#1DA1F2</color>
     <color name="searchBarColor">#DEDBDB</color>
+    <color name="feedBackground">#B99FD8</color>
 </resources>

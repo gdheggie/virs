@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="395dp"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="8dp"
+        android:background="@color/virsPurple"
+        android:id="@+id/constraintLayout"
+        app:layout_constraintHorizontal_bias="0.0">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/poet_image"
+            android:layout_width="84dp"
+            android:layout_height="84dp"
+            app:civ_border_width="2dp"
+            app:civ_border_color="@color/virsPurple"
+            android:src="@drawable/virsicon"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:background="@android:color/black"
+            android:layout_marginStart="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/poems_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/poems"
+            android:textSize="18sp"
+            android:textColor="@color/whiteColor"
+            app:layout_constraintLeft_toRightOf="@+id/poet_image"
+            android:layout_marginStart="45dp"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="19dp" />
+
+        <TextView
+            android:id="@+id/poems_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="18"
+            android:textAlignment="center"
+            android:textColor="@color/whiteColor"
+            android:textSize="18sp"
+            android:layout_marginTop="15dp"
+            app:layout_constraintTop_toBottomOf="@+id/poems_text"
+            app:layout_constraintLeft_toRightOf="@+id/poet_image"
+            android:layout_marginStart="63dp" />
+
+        <TextView
+            android:id="@+id/snaps_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/snaps"
+            android:textSize="18sp"
+            android:textColor="@color/whiteColor"
+            app:layout_constraintLeft_toRightOf="@+id/poems_text"
+            android:layout_marginStart="45dp"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="19dp" />
+
+        <TextView
+            android:id="@+id/snaps_count_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="158"
+            android:textColor="@color/whiteColor"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:layout_marginTop="15dp"
+            app:layout_constraintTop_toBottomOf="@+id/snaps_text"
+            app:layout_constraintLeft_toRightOf="@+id/poems_count"
+            android:layout_marginStart="70dp" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.design.widget.TabLayout
+        android:layout_width="395dp"
+        android:layout_height="50dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:id="@+id/userLayout"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+
+        <android.support.design.widget.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/poems" />
+
+        <android.support.design.widget.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/snapped" />
+
+    </android.support.design.widget.TabLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/user_pager"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/userLayout"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+
+</android.support.constraint.ConstraintLayout>

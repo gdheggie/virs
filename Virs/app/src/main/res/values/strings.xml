@@ -27,5 +27,12 @@
     <string name="poetpic">poet_pic</string>
     <string name="misreadpoet">misreadpoet</string>
     <string name="chev">chevron</string>
-    <string name="roses_are_red_in_the_sky_violets_are_blue_in_the_ocean_come_to_me_where_i_lay_down">roses are red in the sky violets are blue in the ocean come to me where i lay down ...</string>
+    <string name="roses_are_red_in_the_sky_violets_are_blue_in_the_ocean_come_to_me_where_i_lay_down">roses are red in the sky
+        violets are blue in the ocean
+        come to me where i lay down ...</string>
+    <string name="search">Search</string>
+    <string name="new_poem">new_poem</string>
+    <string name="live_stream">live stream</string>
+    <string name="snaps">Snaps</string>
+    <string name="snapped">Snapped</string>
 </resources>
