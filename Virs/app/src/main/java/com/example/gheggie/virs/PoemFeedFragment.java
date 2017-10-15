@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class PoemFeedFragment extends Fragment {
 
     private GridView poemGrid;
-    ArrayList<String> nums = new ArrayList<>();
+    ArrayList<Poem> poems = new ArrayList<>();
 
     @Nullable
     @Override

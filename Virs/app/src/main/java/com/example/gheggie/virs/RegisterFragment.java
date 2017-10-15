@@ -118,7 +118,12 @@ public class RegisterFragment extends Fragment{
                             if (task.isSuccessful()) {
                                 //Go To Poem Feed
                                 removeFragment();
-                                startActivity(new Intent(getActivity(), CropActivity.class));
+                                CropFragment cropFrag = CropFragment.newInstance();
+                                getFragmentManager().beginTransaction().replace(
+                                        R.id.login_frame,
+                                        cropFrag,
+                                        CropFragment.TAG
+                                ).commit();
                             } else {
                                 Toast.makeText(getActivity(),
                                         "Registration Unsuccessful. Try Again!",

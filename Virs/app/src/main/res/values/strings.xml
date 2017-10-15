@@ -39,4 +39,9 @@
     <string name="crop_photo">Crop Photo</string>
     <string name="select">Select</string>
     <string name="profile_photo">Profile Photo</string>
+    <string name="writer_block">Writer\'s Block</string>
+    <string name="title">Title</string>
+    <string name="poem">poem</string>
+    <string name="preview_poem">Preview Poem</string>
+    <string name="poem_c">Poem</string>
 </resources>

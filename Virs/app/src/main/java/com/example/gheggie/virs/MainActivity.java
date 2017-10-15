@@ -1,5 +1,6 @@
 package com.example.gheggie.virs;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
@@ -12,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         liveStream.setOnClickListener(mainActions);
         signOut.setOnClickListener(mainActions);
         setupTabViews();
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
     private final View.OnClickListener mainActions = new View.OnClickListener() {
@@ -57,7 +60,8 @@ public class MainActivity extends AppCompatActivity {
             if(v.getId() == R.id.live_stream){
                 // TODO: Go To Live Stream
             } else if (v.getId() == R.id.write_poem) {
-                // TODO: Go To New Poem Screen
+                // Go To New Poem Screen
+                startActivity(new Intent(MainActivity.this, NewPoemActivity.class));
             } else if (v.getId() == R.id.sign_out) {
                 //sign user out
                 FirebaseAuth.getInstance().signOut();
@@ -98,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case 2:
                         tab.setIcon(R.drawable.profilepurple);
-                        searchBar.setVisibility(View.GONE);
+                        searchBar.setVisibility(View.INVISIBLE);
                         poetBar.setVisibility(View.VISIBLE);
                         poetName.setText(newPoet.getUsername());
                 }

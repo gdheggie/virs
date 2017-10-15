@@ -1,17 +1,22 @@
 package com.example.gheggie.virs;
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -27,26 +32,34 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class CropActivity extends AppCompatActivity implements View.OnClickListener {
+public class CropFragment extends Fragment implements View.OnClickListener {
 
-    private static final int REQUEST_PHOTO = 0x011101;
+    private static final int REQUEST_PHOTO = 0x0111;
     public CircleImageView crop_view;
-    private Uri mCropImageUri;
     private StorageReference fbStorage;
     private Poet newPoet;
+    public static final String TAG = "CropFragment.TAG";
+    private Uri mCropImageUri;
+
+    public static CropFragment newInstance() {
+        return new CropFragment();
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.crop_fragment, container, false);
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_crop);
-
-        crop_view = (CircleImageView)findViewById(R.id.cropped_view);
-        Button selectButton = (Button)findViewById(R.id.select_button);
-        Button finishButton = (Button)findViewById(R.id.crop_button);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        crop_view = (CircleImageView)getActivity().findViewById(R.id.cropped_view);
+        Button selectButton = (Button)getActivity().findViewById(R.id.select_button);
+        Button finishButton = (Button)getActivity().findViewById(R.id.crop_button);
         selectButton.setOnClickListener(this);
         finishButton.setOnClickListener(this);
         fbStorage = FirebaseStorage.getInstance().getReference();
-
     }
 
     private void saveUser() {
@@ -58,9 +71,9 @@ public class CropActivity extends AppCompatActivity implements View.OnClickListe
             if (userEmail != null) {
                     String[] username = userEmail.split("@");
                     ArrayList<String> poems = new ArrayList<>();
-                    Poet newPoet = new Poet(username[0].toLowerCase(), user.getUid(), poems);
+                    newPoet = new Poet(username[0].toLowerCase(), user.getUid(), poems);
                     databaseRef.child("Users").child(user.getUid()).setValue(newPoet);
-                    VirsUtils.savePoet(this, newPoet);
+                    VirsUtils.savePoet(getActivity(), newPoet);
             }
         }
     }
@@ -72,9 +85,7 @@ public class CropActivity extends AppCompatActivity implements View.OnClickListe
             selectPicture();
         } else if (v.getId() == R.id.crop_button) {
             // crop photo
-            if(crop_view != null) {
-                saveUser();
-            }
+            savePhoto(newPoet, mCropImageUri);
         }
     }
 
@@ -84,11 +95,11 @@ public class CropActivity extends AppCompatActivity implements View.OnClickListe
 
     private void getPermission() {
         //get permission if we do not have them yet
-        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+        if(ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Request permissions if we don't have it.
-            ActivityCompat.requestPermissions(this,
+            ActivityCompat.requestPermissions(getActivity(),
                     new String[] {android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_PHOTO);
         } else {
             // open gallery
@@ -106,7 +117,7 @@ public class CropActivity extends AppCompatActivity implements View.OnClickListe
         // open gallery
         Intent pickPhoto = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(pickPhoto , 1);
+        startActivityForResult(pickPhoto, 1);
     }
 
     @Override
@@ -114,14 +125,11 @@ public class CropActivity extends AppCompatActivity implements View.OnClickListe
         super.onActivityResult(requestCode, resultCode, data);
 
         if(data != null) {
-            if (requestCode == 0 || requestCode == 1) {
-                BitmapFactory.Options opts = new BitmapFactory.Options();
-                opts.inSampleSize = 4;
-                mCropImageUri = data.getData();
-                Bitmap bmp = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(mCropImageUri.toString()), 200, 200, false);
-                crop_view.setImageBitmap(bmp);
-                savePhoto(newPoet, mCropImageUri);
-            }
+            BitmapFactory.Options opts = new BitmapFactory.Options();
+            opts.inSampleSize = 4;
+            mCropImageUri = data.getData();
+            crop_view.setImageURI(mCropImageUri);
+            saveUser();
         }
     }
 
@@ -130,9 +138,20 @@ public class CropActivity extends AppCompatActivity implements View.OnClickListe
         fbStorage.putFile(uri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                finish();
-                startActivity(new Intent(CropActivity.this, MainActivity.class));
+                if(task.isSuccessful()) {
+                    removeFragment();
+                    getActivity().finish();
+                    startActivity(new Intent(getActivity(), MainActivity.class));
+                } else {
+                    Toast.makeText(
+                            getActivity(), "Picture did not save", Toast.LENGTH_SHORT).show();
+                }
             }
         });
+    }
+
+    private void removeFragment() {
+        getActivity().getFragmentManager().beginTransaction().
+                remove(this).commit();
     }
 }

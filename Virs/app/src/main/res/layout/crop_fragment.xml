@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.gheggie.virs.CropActivity"
-    android:background="#bb888484">
+    tools:context="com.example.gheggie.virs.CropFragment"
+    android:background="#888484">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/search_toolbar"
@@ -88,6 +88,5 @@
             app:layout_constraintVertical_bias="0.23"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp" />
-
 
 </android.support.constraint.ConstraintLayout>

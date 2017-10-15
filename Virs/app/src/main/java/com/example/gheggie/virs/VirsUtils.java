@@ -1,6 +1,7 @@
 package com.example.gheggie.virs;
 
 import android.content.Context;
+import android.widget.ImageButton;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -35,5 +36,25 @@ class VirsUtils {
             e.printStackTrace();
         }
         return poet;
+    }
+
+    static void snapChange(ImageButton imgButton) {
+        if(imgButton.getTag() == R.drawable.snap){
+            imgButton.setBackgroundResource(R.drawable.snapped);
+            imgButton.setTag(R.drawable.snapped);
+        } else {
+            imgButton.setBackgroundResource(R.drawable.snap);
+            imgButton.setTag(R.drawable.snap);
+        }
+    }
+
+    static void shareChange(ImageButton imgButton) {
+        if(imgButton.getTag() == R.drawable.twittershare){
+            imgButton.setBackgroundResource(R.drawable.twittershared);
+            imgButton.setTag(R.drawable.twittershared);
+        } else {
+            imgButton.setBackgroundResource(R.drawable.twittershare);
+            imgButton.setTag(R.drawable.twittershare);
+        }
     }
 }
