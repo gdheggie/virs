@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.gheggie.virs.CropFragment"
+    tools:context="com.example.gheggie.virs.PhotoFragment"
     android:background="#888484">
 
     <android.support.v7.widget.Toolbar

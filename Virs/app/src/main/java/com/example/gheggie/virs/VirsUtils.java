@@ -39,7 +39,7 @@ class VirsUtils {
     }
 
     static void snapChange(ImageButton imgButton) {
-        if(imgButton.getTag() == R.drawable.snap){
+        if(imgButton.getTag().equals(R.drawable.snap)){
             imgButton.setBackgroundResource(R.drawable.snapped);
             imgButton.setTag(R.drawable.snapped);
         } else {
@@ -49,7 +49,7 @@ class VirsUtils {
     }
 
     static void shareChange(ImageButton imgButton) {
-        if(imgButton.getTag() == R.drawable.twittershare){
+        if (imgButton.getTag().equals(R.drawable.twittershare)) {
             imgButton.setBackgroundResource(R.drawable.twittershared);
             imgButton.setTag(R.drawable.twittershared);
         } else {

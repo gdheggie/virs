@@ -3,7 +3,6 @@ package com.example.gheggie.virs;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -118,11 +117,11 @@ public class RegisterFragment extends Fragment{
                             if (task.isSuccessful()) {
                                 //Go To Poem Feed
                                 removeFragment();
-                                CropFragment cropFrag = CropFragment.newInstance();
+                                PhotoFragment cropFrag = PhotoFragment.newInstance();
                                 getFragmentManager().beginTransaction().replace(
                                         R.id.login_frame,
                                         cropFrag,
-                                        CropFragment.TAG
+                                        PhotoFragment.TAG
                                 ).commit();
                             } else {
                                 Toast.makeText(getActivity(),
