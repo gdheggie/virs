@@ -12,6 +12,10 @@ class VirsUtils {
 
     private static final String FILE_NAME = "poet.txt";
 
+    static final String NEW_POEM = "virs.heggie.greg.NEW-POEM-INTENT";
+
+    static String USERNAME;
+
     static void savePoet(Context context, Poet poet) {
 
         try {

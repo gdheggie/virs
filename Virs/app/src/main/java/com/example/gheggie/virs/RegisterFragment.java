@@ -27,6 +27,7 @@ public class RegisterFragment extends Fragment{
 
     public static final String TAG = "RegisterFragment.TAG";
     private FirebaseAuth firebaseAuth;
+    private EditText userEmail;
     private EditText username2;
     private EditText passwordText2;
     private EditText confirmPasswordText;
@@ -47,6 +48,7 @@ public class RegisterFragment extends Fragment{
         super.onActivityCreated(savedInstanceState);
         firebaseAuth = FirebaseAuth.getInstance();
 
+        userEmail = (EditText) getActivity().findViewById(R.id.email_field);
         username2 = (EditText) getActivity().findViewById(R.id.username_field2);
         passwordText2 = (EditText)getActivity().findViewById(R.id.password_field2);
         confirmPasswordText = (EditText)getActivity().findViewById(R.id.re_password_field);
@@ -89,14 +91,17 @@ public class RegisterFragment extends Fragment{
     }
 
     private void userRegistration() {
-        String username = username2.getText().toString().trim();
+        String email = userEmail.getText().toString().trim();
+        VirsUtils.USERNAME = username2.getText().toString().trim();
         String userPassword = passwordText2.getText().toString().trim();
         String confirmPassword = confirmPasswordText.getText().toString().trim();
 
-        if (TextUtils.isEmpty(username)) {// if email field is empty, notify user
-            username2.setError("Enter username");
+        if(TextUtils.isEmpty(email)) {
+            userEmail.setError("Enter an Email");
+        } else if (TextUtils.isEmpty(VirsUtils.USERNAME)) {// if email field is empty, notify user
+            username2.setError("Enter Username");
         } else if (TextUtils.isEmpty(userPassword)) { // if password field is empty, notify user
-            passwordText2.setError("Enter a password");
+            passwordText2.setError("Enter a Password");
         }  else if (!userPassword.equals(confirmPassword)){
             passwordText2.setText(null);
             confirmPasswordText.setText(null);
@@ -106,10 +111,8 @@ public class RegisterFragment extends Fragment{
             progressDialog.setMessage("Registering User...");
             progressDialog.show();
 
-            String usersignup = username + "@virs.com";
-
             //create user
-            firebaseAuth.createUserWithEmailAndPassword(usersignup, userPassword)
+            firebaseAuth.createUserWithEmailAndPassword(email, userPassword)
                     .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -127,6 +130,7 @@ public class RegisterFragment extends Fragment{
                                 Toast.makeText(getActivity(),
                                         "Registration Unsuccessful. Try Again!",
                                         Toast.LENGTH_SHORT).show();
+                                userEmail.setText(null);
                                 username2.setText(null);
                                 passwordText2.setText(null);
                                 confirmPasswordText.setText(null);

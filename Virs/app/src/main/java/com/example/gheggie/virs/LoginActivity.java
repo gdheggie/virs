@@ -88,10 +88,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void userLogin() {
-        String username = usernameText.getText().toString().trim() + "@virs.com";
+        String userEmail = usernameText.getText().toString().trim();
         String userPassword = passwordText.getText().toString().trim();
 
-        if (TextUtils.isEmpty(username)) {// if email field is empty, notify user
+        if (TextUtils.isEmpty(userEmail)) {// if email field is empty, notify user
             usernameText.setError("Enter username");
         } else if (TextUtils.isEmpty(userPassword)) { // if password field is empty, notify user
             passwordText.setError("Enter a password");
@@ -101,7 +101,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             progressDialog.show();
 
             //create user
-            firebaseAuth.signInWithEmailAndPassword(username, userPassword)
+            firebaseAuth.signInWithEmailAndPassword(userEmail, userPassword)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {

@@ -44,4 +44,7 @@
     <string name="poem">poem</string>
     <string name="preview_poem">Preview Poem</string>
     <string name="poem_c">Poem</string>
+    <string name="submit_new_poem">Submit New Poem</string>
+    <string name="upload_poem">Upload Poem</string>
+    <string name="email">email</string>
 </resources>

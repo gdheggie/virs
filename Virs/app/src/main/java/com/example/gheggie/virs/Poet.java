@@ -10,17 +10,24 @@ class Poet implements Serializable {
 
     private final String username;
     private final String userId;
-    private final Uri userIcon;
-    private final ArrayList<Poem> poems;
-    private final ArrayList<Poem> snappedPoems;
+    //private final Uri userIcon;
+    private ArrayList<String> poems;
+    private ArrayList<String> snappedPoems;
 
-    Poet(String user, String id, Uri icon, ArrayList<Poem> _poems, ArrayList<Poem> _snappedPoems) {
+    Poet(String user, String id, ArrayList<String> _poems, ArrayList<String> _snappedPoems) {
         username = user;
         userId = id;
-        userIcon = icon;
         poems = _poems;
         snappedPoems = _snappedPoems;
     }
+
+//    Poet(String user, String id, Uri icon, ArrayList<String> _poems, ArrayList<String> _snappedPoems) {
+//        username = user;
+//        userId = id;
+//        userIcon = icon;
+//        poems = _poems;
+//        snappedPoems = _snappedPoems;
+//    }
 
     public String getUsername() {
         return username;
@@ -30,15 +37,15 @@ class Poet implements Serializable {
         return userId;
     }
 
-    public Uri getUserIcon() {
-        return userIcon;
-    }
+//    public Uri getUserIcon() {
+//        return userIcon;
+//    }
 
-    public ArrayList<Poem> getPoems() {
+    public ArrayList<String> getPoems() {
         return poems;
     }
 
-    public ArrayList<Poem> getSnappedPoems() {
+    public ArrayList<String> getSnappedPoems() {
         return snappedPoems;
     }
 }

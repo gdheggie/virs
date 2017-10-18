@@ -5,15 +5,32 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 public class UserProfileFragment extends Fragment {
 
     private ListView mUserPoems;
     private ListView mSnappedPoems;
+    private TextView poemCount;
+    private TextView snapCount;
+    private Poet currentPoet;
+    private ArrayList<String> poemIds = new ArrayList<>();
+    private ArrayList<Poem> poems = new ArrayList<>();
 
 
     @Nullable
@@ -28,6 +45,48 @@ public class UserProfileFragment extends Fragment {
         mUserPoems = (ListView)getActivity().findViewById(R.id.user_poem_list);
         mSnappedPoems = (ListView)getActivity().findViewById(R.id.user_snapped_list);
         setupUserProfileTab();
+        poemCount = (TextView)getActivity().findViewById(R.id.poems_count);
+        snapCount = (TextView)getActivity().findViewById(R.id.snaps_count_text);
+        currentPoet = VirsUtils.loadPoet(getActivity());
+        poemCount.setText(String.valueOf(currentPoet.getPoems().size()));
+        poemIds = currentPoet.getPoems();
+        grabUserPoems();
+    }
+
+    private void grabUserPoems(){
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+        database.child("Poems");
+        database.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, Object> fbPoems = (Map<String, Object>) dataSnapshot.getChildren().iterator().next().getValue();
+
+                for(Map.Entry<String, Object> poem : fbPoems.entrySet()) {
+                    Map newPoem = (Map)poem.getValue();
+                    if(poemIds.contains(newPoem.get("poemId").toString())) {
+                        poems.add(new Poem(newPoem.get("title").toString(), newPoem.get("poem").toString()
+                                , newPoem.get("poet").toString(), newPoem.get("date").toString()
+                                , newPoem.get("poemId").toString()
+                                , Integer.valueOf(newPoem.get("snapCount").toString())));
+                        refreshUserList();
+                        totalSnaps();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void totalSnaps(){
+        int totalSnaps = 0;
+        for(Poem p : poems) {
+            totalSnaps += p.getSnapCount();
+        }
+        snapCount.setText(String.valueOf(totalSnaps));
     }
 
     private void setupUserProfileTab() {
@@ -70,5 +129,15 @@ public class UserProfileFragment extends Fragment {
 
             }
         });
+    }
+
+    private void refreshUserList(){
+        UserPoemAdapter userAdapter = new UserPoemAdapter(poems, getActivity());
+        mUserPoems.setAdapter(userAdapter);
+        userAdapter.notifyDataSetChanged();
+    }
+
+    private void refreshSnapList(){
+
     }
 }

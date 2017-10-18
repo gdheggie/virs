@@ -27,10 +27,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-
-import java.io.ByteArrayOutputStream;
-import java.net.URL;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -39,11 +35,9 @@ public class PhotoFragment extends Fragment implements View.OnClickListener {
 
     private static final int REQUEST_PHOTO = 0x0111;
     public CircleImageView crop_view;
-    private Poet newPoet;
     public static final String TAG = "PhotoFragment.TAG";
-    private Uri mCropImageUri;
-    private StorageReference fbStorage = FirebaseStorage.getInstance().getReference();
-    private DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+//    private StorageReference fbStorage = FirebaseStorage.getInstance().getReference();
+//    private DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
     public static PhotoFragment newInstance() {
         return new PhotoFragment();
@@ -65,21 +59,21 @@ public class PhotoFragment extends Fragment implements View.OnClickListener {
         finishButton.setOnClickListener(this);
     }
 
-    private void saveUser(Uri url) {
+    private void saveUser() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
         // save user to database & local storage
         if (user != null) {
-            String userEmail = user.getEmail();
-            if (userEmail != null) {
-                    String[] username = userEmail.split("@");
-                    ArrayList<Poem> poems = new ArrayList<>();
-                    ArrayList<Poem> snappedPoems = new ArrayList<>();
-                    newPoet = new Poet(username[0].toLowerCase(), user.getUid(), url, poems, snappedPoems);
-                    databaseRef.child("Users").child(user.getUid()).setValue(newPoet);
-                    VirsUtils.savePoet(getActivity(), newPoet);
-            }
+            ArrayList<String> poems = new ArrayList<>();
+            ArrayList<String> snappedPoems = new ArrayList<>();
+            Poet newPoet = new Poet(VirsUtils.USERNAME.toLowerCase(), user.getUid(), poems, snappedPoems);
+            databaseRef.child("Users").child(user.getUid()).setValue(newPoet);
+            VirsUtils.savePoet(getActivity(), newPoet);
         }
+
+        removeFragment();
+        getActivity().finish();
+        startActivity(new Intent(getActivity(), MainActivity.class));
     }
 
     @Override
@@ -89,7 +83,8 @@ public class PhotoFragment extends Fragment implements View.OnClickListener {
             selectPicture();
         } else if (v.getId() == R.id.crop_button) {
             // crop photo
-            savePhoto();
+            //savePhoto();
+            saveUser();
         }
     }
 
@@ -131,29 +126,26 @@ public class PhotoFragment extends Fragment implements View.OnClickListener {
         if(data != null) {
             BitmapFactory.Options opts = new BitmapFactory.Options();
             opts.inSampleSize = 4;
-            mCropImageUri = data.getData();
+            Uri mCropImageUri = data.getData();
             crop_view.setImageURI(mCropImageUri);
         }
     }
 
-    private void savePhoto(){
-        final ProgressDialog progress = new ProgressDialog(getActivity());
-        progress.setMessage("Saving user info...");
-        progress.show();
-        fbStorage.child("Photos").child(mCropImageUri.getLastPathSegment());
-        fbStorage.putFile(mCropImageUri).addOnSuccessListener(
-                getActivity(), new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                progress.dismiss();
-                saveUser(mCropImageUri);
-
-            }
-        });
-//        removeFragment();
-//        getActivity().finish();
-//        startActivity(new Intent(getActivity(), MainActivity.class));
-    }
+//    private void savePhoto(){
+//        final ProgressDialog progress = new ProgressDialog(getActivity());
+//        progress.setMessage("Saving user info...");
+//        progress.show();
+//        progress.dismiss();
+//        fbStorage.child("Photos").child(mCropImageUri.getLastPathSegment());
+//        fbStorage.putFile(mCropImageUri).addOnSuccessListener(
+//                getActivity(), new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//            @Override
+//            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                progress.dismiss();
+//
+//            }
+//        });
+//    }
 
     private void removeFragment() {
         getActivity().getFragmentManager().beginTransaction().

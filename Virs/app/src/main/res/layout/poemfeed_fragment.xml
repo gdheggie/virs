@@ -15,5 +15,5 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         android:numColumns="1"
-        android:verticalSpacing="20dp"/>
+        android:verticalSpacing="4dp"/>
 </android.support.constraint.ConstraintLayout>

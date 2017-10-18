@@ -1,6 +1,7 @@
 package com.example.gheggie.virs;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,14 +9,22 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
-class PoemFeedAdapter extends BaseAdapter {
+import de.hdodenhof.circleimageview.CircleImageView;
 
+/**
+ * Created by gheggie on 10/18/17.
+ */
+
+public class UserPoemAdapter extends BaseAdapter {
     private ArrayList<Poem> mPoems = new ArrayList<>();
     private Context mContext;
 
-    PoemFeedAdapter(ArrayList<Poem> poems, Context context) {
+    UserPoemAdapter(ArrayList<Poem> poems, Context context) {
         mPoems = poems;
         mContext = context;
     }
@@ -46,42 +55,40 @@ class PoemFeedAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder viewHolder;
+        UserViewHolder viewHolder;
 
         if(convertView == null) {
 
             convertView = LayoutInflater.from(mContext)
-                    .inflate(R.layout.poem_cell,parent,false);
+                    .inflate(R.layout.users_cell,parent,false);
 
-            viewHolder = new ViewHolder(convertView);
+            viewHolder = new UserViewHolder(convertView);
 
             convertView.setTag(viewHolder);
 
         } else {
-            viewHolder = (ViewHolder)convertView.getTag();
+            viewHolder = (UserViewHolder) convertView.getTag();
         }
 
         Poem poem = (Poem) getItem(position);
-        //viewHolder.poetView.setImageBitmap(poem);
-        viewHolder.poetName.setText(poem.getPoet());
-        String poem_preview = poem.getPoem().substring(0,90);
-        viewHolder.poemPreview.setText(poem_preview);
-        viewHolder.snapCount.setText(String.valueOf(poem.getSnapCount()));
+        viewHolder.image.setVisibility(View.GONE);
+        viewHolder.title.setTextColor(ContextCompat.getColor(mContext, R.color.blackColor));
+        viewHolder.title.setText(poem.getTitle());
+        String[] poemDate = poem.getDate().split("-");
+        viewHolder.date.setText(poemDate[0]);
         return convertView;
     }
 }
 
-class ViewHolder{
-    ImageView poetView;
-    TextView poetName;
-    TextView poemPreview;
-    TextView snapCount;
+class UserViewHolder{
+    TextView title;
+    TextView date;
+    CircleImageView image;
 
-    ViewHolder(View v) {
-        poetView = (ImageView)v.findViewById(R.id.poet_image);
-        poetName = (TextView)v.findViewById(R.id.poet_name);
-        poemPreview = (TextView)v.findViewById(R.id.poem_preview);
-        snapCount = (TextView)v.findViewById(R.id.snap_count);
+    UserViewHolder(View v) {
+        image = (CircleImageView) v.findViewById(R.id.event_image);
+        title = (TextView)v.findViewById(R.id.event_name);
+        date = (TextView)v.findViewById(R.id.event_type);
     }
 
 }
