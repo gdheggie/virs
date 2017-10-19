@@ -47,4 +47,6 @@
     <string name="submit_new_poem">Submit New Poem</string>
     <string name="upload_poem">Upload Poem</string>
     <string name="email">email</string>
+    <string name="poem_underline">poem_underline</string>
+    <string name="snapped_underline">snapped_underline</string>
 </resources>

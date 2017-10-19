@@ -6,6 +6,55 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <android.support.v7.widget.Toolbar
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/user_bar"
+        android:background="@color/whiteColor"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:elevation="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.0">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/back_2"
+                android:contentDescription="@string/live_stream"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/arrow"
+                android:background="@android:color/transparent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/poem_c"
+                android:textColor="@color/blackColor"
+                android:textSize="20sp"
+                app:layout_constraintLeft_toRightOf="@+id/back_2"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintHorizontal_bias="0.421"
+                app:layout_constraintVertical_bias="0.454"
+                android:layout_marginEnd="8dp" />
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v7.widget.Toolbar>
+
     <android.support.constraint.ConstraintLayout
         android:layout_width="395dp"
         android:layout_height="wrap_content"
@@ -13,13 +62,13 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="4dp"
         android:background="@color/virsPurple"
         android:id="@+id/constraintLayout"
         app:layout_constraintHorizontal_bias="0.0"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp">
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/user_bar">
 
         <de.hdodenhof.circleimageview.CircleImageView
             xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -52,7 +101,6 @@
             android:id="@+id/poems_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="8"
             android:textAlignment="center"
             android:textColor="@color/whiteColor"
             android:textSize="18sp"
@@ -77,7 +125,6 @@
             android:id="@+id/snaps_count_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0"
             android:textColor="@color/whiteColor"
             android:textAlignment="center"
             android:textSize="18sp"
@@ -88,40 +135,85 @@
 
     </android.support.constraint.ConstraintLayout>
 
-    <android.support.design.widget.TabLayout
-        android:layout_width="395dp"
-        android:layout_height="50dp"
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:id="@+id/linearLayout"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp">
+
+        <TextView
+            android:id="@+id/poems_click"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="@string/poems"
+            android:textSize="16sp"
+            android:textColor="@color/virsPurple"
+            android:layout_weight="5"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/snapped_click"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:textColor="@color/blackColor"
+            android:textSize="16sp"
+            android:text="@string/snapped"
+            android:layout_weight="5"
+            android:gravity="center"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:id="@+id/userLayout"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+        android:id="@+id/linearLayout3"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp">
 
-        <android.support.design.widget.TabItem
+        <ImageView
+            android:contentDescription="@string/poem_underline"
+            android:id="@+id/line_view"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/poems" />
+            android:layout_height="5dp"
+            android:src="@drawable/virs_line"
+            android:layout_weight="5"
+            android:gravity="center"/>
 
-        <android.support.design.widget.TabItem
+        <ImageView
+            android:contentDescription="@string/snapped_underline"
+            android:id="@+id/line_view_2"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/snapped" />
+            android:layout_height="5dp"
+            android:layout_weight="5"
+            android:src="@drawable/virs_line"
+            android:gravity="center"
+            android:visibility="invisible"/>
 
-    </android.support.design.widget.TabLayout>
+    </LinearLayout>
 
     <ListView
         android:id="@+id/user_snapped_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/userLayout"
-        android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="8dp"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
     <ListView
         android:id="@+id/user_poem_list"
@@ -130,13 +222,14 @@
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userLayout"
-        app:layout_constraintVertical_bias="1.0" />
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
 </android.support.constraint.ConstraintLayout>

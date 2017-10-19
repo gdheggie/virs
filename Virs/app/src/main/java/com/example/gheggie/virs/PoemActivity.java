@@ -1,6 +1,7 @@
 package com.example.gheggie.virs;
 
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,6 +27,7 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
     private TextView thePoem;
     private ImageButton snap;
     private TextView snapCount;
+    private TextView shareLabel;
     private TextView poemDate;
     private ImageButton sharePoem;
     private Intent poemIntent;
@@ -42,12 +45,19 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
         poemPoet = (TextView)findViewById(R.id.by_text);
         thePoem = (TextView)findViewById(R.id.user_poem);
         snapCount = (TextView)findViewById(R.id.user_snaps);
+        shareLabel = (TextView)findViewById(R.id.share_label);
         poemDate = (TextView)findViewById(R.id.when_text);
         snap = (ImageButton)findViewById(R.id.poem_snap);
         snap.setTag(R.drawable.snap);
+        snap.setImageResource(R.drawable.snap);
         sharePoem = (ImageButton)findViewById(R.id.poem_share);
+        sharePoem.setImageResource(R.drawable.twittershare);
         sharePoem.setTag(R.drawable.twittershare);
         poemIntent = getIntent();
+        snapCount.setOnClickListener(this);
+        snap.setOnClickListener(this);
+        shareLabel.setOnClickListener(this);
+        sharePoem.setOnClickListener(this);
 
         Button upload = (Button)findViewById(R.id.upload_poem);
         upload.setOnClickListener(this);
@@ -68,20 +78,22 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(View v) {
                 finish();
-                Intent poemIntent = new Intent(PoemActivity.this, NewPoemActivity.class);
-                poemIntent.putExtra(VirsUtils.NEW_POEM, newPoem);
-                startActivity(poemIntent);
+                if(poemIntent.hasExtra(VirsUtils.NEW_POEM)) {
+                    Intent editIntent = new Intent(PoemActivity.this, NewPoemActivity.class);
+                    editIntent.putExtra(VirsUtils.NEW_POEM, newPoem);
+                    startActivity(editIntent);
+                }
             }
         });
     }
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.poem_snap) {
-            VirsUtils.snapChange(snap);
+        if(v.getId() == R.id.poem_snap || v.getId() == R.id.user_snaps) {
+            VirsUtils.snapChange(this, snap, snapCount);
             updateSnapCount();
-        } else if (v.getId() == R.id.poem_share) {
-            VirsUtils.shareChange(sharePoem);
+        } else if (v.getId() == R.id.poem_share || v.getId() == R.id.share_label) {
+            VirsUtils.shareChange(this, sharePoem, shareLabel);
             shareToTwitter();
         } else if (v.getId() == R.id.upload_poem) {
             uploadPoem(newPoem);
@@ -90,12 +102,22 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void showPoem(){
-        //Get Poem and show here
+        //show preview poem
         if(poemIntent.hasExtra(VirsUtils.NEW_POEM)) {
             newPoem = (Poem)poemIntent.getSerializableExtra(VirsUtils.NEW_POEM);
             populatePoem(newPoem);
-        } else {
-            // ToDo: Grab Poem from database;
+        } else if (poemIntent.hasExtra(VirsUtils.FEED_POEM)){
+            // show clicked poem
+            newPoem = (Poem)poemIntent.getSerializableExtra(VirsUtils.FEED_POEM);
+            populatePoem(newPoem);
+        } else if (poemIntent.hasExtra(VirsUtils.USER_POEM)) {
+            // show clicked poem
+            newPoem = (Poem)poemIntent.getSerializableExtra(VirsUtils.USER_POEM);
+            populatePoem(newPoem);
+        } else if (poemIntent.hasExtra(VirsUtils.SNAPPED_POEM)) {
+            // show clicked poem
+            newPoem = (Poem)poemIntent.getSerializableExtra(VirsUtils.SNAPPED_POEM);
+            populatePoem(newPoem);
         }
     }
 

@@ -4,11 +4,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-public class ViewPagerAdapter extends FragmentStatePagerAdapter {
+class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
     private int mNumOfTabs;
 
-    public ViewPagerAdapter(FragmentManager fm, int _NumOfTabs) {
+    ViewPagerAdapter(FragmentManager fm, int _NumOfTabs) {
         super(fm);
         mNumOfTabs = _NumOfTabs;
     }

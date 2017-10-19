@@ -76,7 +76,9 @@ public class NewPoemActivity extends AppCompatActivity implements View.OnClickLi
             SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
             Date date = new Date();
             String poemID = poemTitleText.trim() + savedf.format(date);
-            Poem previewPoem = new Poem(poemTitleText, poem, thisPoet.getUsername(),sdf.format(date), poemID , 0);
+            Poem previewPoem = new Poem(poemTitleText, poem
+                    , thisPoet.getUsername(),sdf.format(date), poemID
+                    , 0);
             // Go To Poem Screen with preview of poem
             finish();
             Intent poemIntent = new Intent(NewPoemActivity.this, PoemActivity.class);

@@ -8,11 +8,13 @@ import java.util.ArrayList;
 
 class Poet implements Serializable {
 
-    private final String username;
-    private final String userId;
+    private String username;
+    private String userId;
     //private final Uri userIcon;
     private ArrayList<String> poems;
     private ArrayList<String> snappedPoems;
+
+    Poet(){}
 
     Poet(String user, String id, ArrayList<String> _poems, ArrayList<String> _snappedPoems) {
         username = user;
@@ -33,11 +35,19 @@ class Poet implements Serializable {
         return username;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public String getUserId() {
         return userId;
     }
 
-//    public Uri getUserIcon() {
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    //    public Uri getUserIcon() {
 //        return userIcon;
 //    }
 
@@ -45,7 +55,15 @@ class Poet implements Serializable {
         return poems;
     }
 
+    public void setPoems(ArrayList<String> poems) {
+        this.poems = poems;
+    }
+
     public ArrayList<String> getSnappedPoems() {
         return snappedPoems;
+    }
+
+    public void setSnappedPoems(ArrayList<String> snappedPoems) {
+        this.snappedPoems = snappedPoems;
     }
 }

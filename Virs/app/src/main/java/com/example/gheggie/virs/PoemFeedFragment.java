@@ -1,17 +1,22 @@
 package com.example.gheggie.virs;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -28,6 +33,8 @@ public class PoemFeedFragment extends Fragment {
     private GridView poemGrid;
     ArrayList<Poem> poems = new ArrayList<>();
     PoemFeedAdapter poemAdapter;
+    private ProgressBar poemProgress;
+    private ConstraintLayout feedLayout;
 
     @Nullable
     @Override
@@ -41,6 +48,10 @@ public class PoemFeedFragment extends Fragment {
 
         poemGrid = (GridView)getActivity().findViewById(R.id.poem_grid);
         checkConnection();
+        poemProgress = (ProgressBar)getActivity().findViewById(R.id.feed_progress);
+        poemProgress.setVisibility(View.VISIBLE);
+        feedLayout = (ConstraintLayout)getActivity().findViewById(R.id.poemfeed_background);
+        feedLayout.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.whiteColor));
     }
 
     private void grabPoemFeed(){
@@ -50,16 +61,16 @@ public class PoemFeedFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 poems.clear();
-
                 Map<String, Object> fbPoems = (Map<String, Object>) dataSnapshot.getChildren().iterator().next().getValue();
-
-
+                poemProgress.setVisibility(View.GONE);
                 for(Map.Entry<String, Object> poem : fbPoems.entrySet()) {
                     Map newPoem = (Map)poem.getValue();
                     poems.add(new Poem(newPoem.get("title").toString(), newPoem.get("poem").toString()
                     , newPoem.get("poet").toString(), newPoem.get("date").toString()
-                    , newPoem.get("poemId").toString(), Integer.valueOf(newPoem.get("snapCount").toString())));
+                    , newPoem.get("poemId").toString(), newPoem.get("poetId").toString()
+                            , Integer.valueOf(newPoem.get("snapCount").toString())));
                     refreshPoems();
+                    feedLayout.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.feedBackground));
                 }
             }
 

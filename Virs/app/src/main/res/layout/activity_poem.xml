@@ -41,7 +41,6 @@
                 android:text="@string/poem_c"
                 android:textColor="@color/blackColor"
                 android:textSize="20sp"
-                android:layout_marginRight="8dp"
                 app:layout_constraintLeft_toRightOf="@+id/back_poem"
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_marginTop="8dp"
@@ -73,7 +72,6 @@
         android:id="@+id/title_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Everlasting Love"
         android:textSize="20sp"
         android:textColor="@color/blackColor"
         app:layout_constraintLeft_toRightOf="@+id/user_image"
@@ -86,7 +84,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="16sp"
-        android:text="By: misreadpoet"
         android:maxLength="90"
         android:textColor="@color/blackColor"
         app:layout_constraintLeft_toRightOf="@+id/user_image"
@@ -99,7 +96,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="16sp"
-        android:text="created : 10/21/2017"
         android:maxLength="90"
         android:textColor="@color/blackColor"
         app:layout_constraintLeft_toRightOf="@+id/user_image"
@@ -130,7 +126,8 @@
                 android:id="@+id/user_poem"
                 android:textSize="18sp"
                 android:layout_marginTop="8dp"
-                android:textColor="@color/blackColor"/>
+                android:textColor="@color/blackColor"
+                android:paddingBottom="8dp"/>
     </ScrollView>
 
     <ImageButton
@@ -138,7 +135,6 @@
         android:id="@+id/poem_snap"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/snap"
         android:background="@android:color/transparent"
         android:layout_marginStart="50dp"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -152,7 +148,6 @@
         android:layout_height="40dp"
         android:background="@android:color/transparent"
         android:scaleType="fitXY"
-        app:srcCompat="@drawable/twittershare"
         app:layout_constraintLeft_toRightOf="@+id/user_snaps"
         android:layout_marginStart="50dp"
         android:layout_marginBottom="18dp"
@@ -164,6 +159,7 @@
         android:layout_height="wrap_content"
         android:text="@string/_43_snaps"
         android:textSize="17sp"
+        android:textColor="@color/blackColor"
         android:background="@android:color/transparent"
         app:layout_constraintLeft_toRightOf="@+id/poem_snap"
         android:layout_marginStart="10dp"
@@ -176,9 +172,10 @@
         android:layout_height="wrap_content"
         android:text="@string/share"
         android:textSize="17sp"
+        android:textColor="@color/blackColor"
         app:layout_constraintLeft_toRightOf="@+id/poem_share"
         android:layout_marginStart="10dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="23dp"
         app:layout_constraintBottom_toTopOf="@+id/upload_poem" />
 
     <Button

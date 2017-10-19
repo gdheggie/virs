@@ -6,27 +6,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.text.DateFormatSymbols;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-/**
- * Created by gheggie on 10/18/17.
- */
-
-public class UserPoemAdapter extends BaseAdapter {
+public class CustomAdapter extends BaseAdapter {
     private ArrayList<Poem> mPoems = new ArrayList<>();
     private Context mContext;
+    private String type;
 
-    UserPoemAdapter(ArrayList<Poem> poems, Context context) {
+    CustomAdapter(ArrayList<Poem> poems, Context context, String _type) {
         mPoems = poems;
         mContext = context;
+        type = _type;
     }
 
     @Override
@@ -55,23 +49,26 @@ public class UserPoemAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        UserViewHolder viewHolder;
+        CustomViewHolder viewHolder;
 
         if(convertView == null) {
-
             convertView = LayoutInflater.from(mContext)
                     .inflate(R.layout.users_cell,parent,false);
 
-            viewHolder = new UserViewHolder(convertView);
+            viewHolder = new CustomViewHolder(convertView);
 
             convertView.setTag(viewHolder);
 
         } else {
-            viewHolder = (UserViewHolder) convertView.getTag();
+            viewHolder = (CustomViewHolder) convertView.getTag();
         }
 
         Poem poem = (Poem) getItem(position);
-        viewHolder.image.setVisibility(View.GONE);
+        if(type.equals("Snapped") || type.equals("Events")) {
+            viewHolder.image.setVisibility(View.VISIBLE);
+        } else {
+            viewHolder.image.setVisibility(View.GONE);
+        }
         viewHolder.title.setTextColor(ContextCompat.getColor(mContext, R.color.blackColor));
         viewHolder.title.setText(poem.getTitle());
         String[] poemDate = poem.getDate().split("-");
@@ -80,12 +77,12 @@ public class UserPoemAdapter extends BaseAdapter {
     }
 }
 
-class UserViewHolder{
+class CustomViewHolder {
     TextView title;
     TextView date;
     CircleImageView image;
 
-    UserViewHolder(View v) {
+    CustomViewHolder(View v) {
         image = (CircleImageView) v.findViewById(R.id.event_image);
         title = (TextView)v.findViewById(R.id.event_name);
         date = (TextView)v.findViewById(R.id.event_type);
