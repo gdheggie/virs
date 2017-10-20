@@ -111,7 +111,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
                             } else {
                                 Toast.makeText(LoginActivity.this,
-                                        "Login Failed. Try Again",
+                                        task.getResult().toString(),
                                         Toast.LENGTH_SHORT).show();
                             }
                         }

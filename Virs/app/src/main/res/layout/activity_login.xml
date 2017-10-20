@@ -47,7 +47,7 @@
             android:ems="10"
             android:background="@color/editTextbackground"
             android:textColor="@color/virsPurple"
-            android:inputType="textPersonName"
+            android:inputType="textEmailAddress"
             android:hint="@string/email"/>
     </android.support.design.widget.TextInputLayout>
 
