@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.gheggie.virs.LoginActivity"
-    android:background="@drawable/loginbg">
+    android:background="@drawable/background">
 
     <ImageView
         android:id="@+id/logo_view"
