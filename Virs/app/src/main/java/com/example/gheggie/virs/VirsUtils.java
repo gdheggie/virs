@@ -5,48 +5,16 @@ import android.support.v4.content.ContextCompat;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
 class VirsUtils {
-
-    private static final String FILE_NAME = "poet.txt";
 
     static final String NEW_POEM = "virs.heggie.greg.NEW-POEM-INTENT";
     static final String FEED_POEM = "virs.heggie.greg.FEED-POEM-INTENT";
     static final String USER_POEM = "virs.heggie.greg.USER-POEM-INTENT";
     static final String SNAPPED_POEM = "virs.heggie.greg.SNAPPED-POEM-INTENT";
     static final String USER_CLICKED = "virs.heggie.greg.USER-CLICKED-INTENT";
+    static final String USER_ID = "virs.heggie.greg.USER-ID";
 
-    static String USERNAME;
-
-    static void savePoet(Context context, Poet poet) {
-
-        try {
-            FileOutputStream fos = context.openFileOutput(FILE_NAME, Context.MODE_PRIVATE);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(poet);
-            oos.close();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    static Poet loadPoet(Context context) {
-        Poet poet = null;
-
-        try {
-            FileInputStream fis = context.openFileInput(FILE_NAME);
-            ObjectInputStream ois = new ObjectInputStream(fis);
-            poet = (Poet) ois.readObject();
-            ois.close();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-        return poet;
-    }
+    static Poet currentPoet = new Poet();
 
     static void snapChange(Context context, ImageButton imgButton, TextView txtView) {
         if(imgButton.getTag().equals(R.drawable.snap)){

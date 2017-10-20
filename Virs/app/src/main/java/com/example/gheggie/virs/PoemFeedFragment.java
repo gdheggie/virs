@@ -1,7 +1,6 @@
 package com.example.gheggie.virs;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.constraint.ConstraintLayout;
@@ -9,12 +8,9 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -51,7 +47,6 @@ public class PoemFeedFragment extends Fragment {
         poemProgress = (ProgressBar)getActivity().findViewById(R.id.feed_progress);
         poemProgress.setVisibility(View.VISIBLE);
         feedLayout = (ConstraintLayout)getActivity().findViewById(R.id.poemfeed_background);
-        feedLayout.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.whiteColor));
     }
 
     private void grabPoemFeed(){
@@ -70,7 +65,6 @@ public class PoemFeedFragment extends Fragment {
                     , newPoem.get("poemId").toString(), newPoem.get("poetId").toString()
                             , Integer.valueOf(newPoem.get("snapCount").toString())));
                     refreshPoems();
-                    feedLayout.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.feedBackground));
                 }
             }
 

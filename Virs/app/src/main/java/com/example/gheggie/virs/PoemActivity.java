@@ -1,24 +1,23 @@
 package com.example.gheggie.virs;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+
+import static com.example.gheggie.virs.VirsUtils.currentPoet;
 
 public class PoemActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -31,16 +30,14 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
     private TextView poemDate;
     private ImageButton sharePoem;
     private Intent poemIntent;
-    private Poet currentPoet;
     private Poem newPoem = null;
+    private ImageButton deletePoemButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poem);
         setupToolBar();
-
-        currentPoet = VirsUtils.loadPoet(this);
         poemTitle = (TextView)findViewById(R.id.title_name);
         poemPoet = (TextView)findViewById(R.id.by_text);
         thePoem = (TextView)findViewById(R.id.user_poem);
@@ -65,6 +62,7 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
             upload.setVisibility(View.VISIBLE);
         } else {
             upload.setVisibility(View.GONE);
+
         }
         showPoem();
     }
@@ -83,6 +81,13 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
                     editIntent.putExtra(VirsUtils.NEW_POEM, newPoem);
                     startActivity(editIntent);
                 }
+            }
+        });
+        deletePoemButton = (ImageButton)findViewById(R.id.delete_poem_2);
+        deletePoemButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deletePoemAlert(newPoem);
             }
         });
     }
@@ -137,6 +142,13 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
             String snaps = poem.getSnapCount() + " snaps";
             snapCount.setText(snaps);
         }
+
+        // show delete icon for user owned poems
+        if(currentPoet.getUserId().equals(poem.getPoetId())) {
+            deletePoemButton.setVisibility(View.VISIBLE);
+        } else {
+            deletePoemButton.setVisibility(View.GONE);
+        }
     }
 
     private void updateSnapCount(){
@@ -149,14 +161,45 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
 
     private void uploadPoem(Poem poem){
         //Save Poem to Database
-        DatabaseReference database =
-                FirebaseDatabase.getInstance().getReference();
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         database.child("Poems").child(poem.getPoemId()).setValue(poem);
 
-        currentPoet.getPoems().add(poem.getPoemId());
-        VirsUtils.savePoet(this, currentPoet);
+        if(currentPoet.getPoems() == null) {
+            ArrayList<String> poems = new ArrayList<>();
+            poems.add(poem.getPoemId());
+            currentPoet.setPoems(poems);
+        } else {
+            currentPoet.getPoems().add(poem.getPoemId());
+        }
 
         database.child("Users").child(currentPoet.getUserId()).removeValue();
         database.child("Users").child(currentPoet.getUserId()).setValue(currentPoet);
     }
+
+
+    private void deletePoemAlert(final Poem poem) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Delete " + poem.getTitle());
+        builder.setNegativeButton("NO", null);
+        builder.setPositiveButton("DELETE POEM", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deleteUserPoem(poem);
+            }
+        }).show();
+    }
+
+    private void deleteUserPoem(Poem poem){
+        //Delete Poem from Database
+        DatabaseReference database =
+                FirebaseDatabase.getInstance().getReference();
+        database.child("Poems").child(poem.getPoemId()).removeValue();
+        currentPoet.getPoems().remove(poem.getPoemId());
+
+        database.child("Users").child(currentPoet.getUserId()).removeValue();
+        database.child("Users").child(currentPoet.getUserId()).setValue(currentPoet);
+
+        finish();
+    }
+
 }

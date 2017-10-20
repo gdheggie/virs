@@ -1,9 +1,6 @@
 package com.example.gheggie.virs;
 
-import android.net.Uri;
-
 import java.io.Serializable;
-import java.net.URL;
 import java.util.ArrayList;
 
 class Poet implements Serializable {

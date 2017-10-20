@@ -49,4 +49,9 @@
     <string name="email">email</string>
     <string name="poem_underline">poem_underline</string>
     <string name="snapped_underline">snapped_underline</string>
+    <string name="user_info">User Info</string>
+    <string name="choose_a_username">Choose a Username</string>
+    <string name="choose_pic">Choose a profile picture</string>
+    <string name="select_profile_photo">Select Profile Photo</string>
+    <string name="check">Check</string>
 </resources>

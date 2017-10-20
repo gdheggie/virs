@@ -3,15 +3,10 @@ package com.example.gheggie.virs;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -20,26 +15,33 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Map;
+
+import static com.example.gheggie.virs.VirsUtils.currentPoet;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Poet newPoet;
     private EditText search;
     private Toolbar searchBar;
     private Toolbar poetBar;
     private ImageButton liveStream;
     private ImageButton writePoem;
     private TextView poetName;
+    private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+    private DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        newPoet = VirsUtils.loadPoet(this);
+        getCurrentUser();
         searchBar =(Toolbar)findViewById(R.id.search_toolbar);
         poetBar = (Toolbar)findViewById(R.id.poet_screen_title);
         search = (EditText)findViewById(R.id.poem_search);
@@ -52,6 +54,29 @@ public class MainActivity extends AppCompatActivity {
         signOut.setOnClickListener(mainActions);
         setupTabViews();
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+    }
+
+    private void getCurrentUser(){
+        database.child("Users").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, Object> fbUsernames = (Map<String, Object>) dataSnapshot.getValue();
+                for(Map.Entry<String, Object> users : fbUsernames.entrySet()){
+                    Map newUser = (Map)users.getValue();
+                    if(newUser.get("userId").equals(currentUser.getUid())) {
+                        currentPoet.setUserId(newUser.get("userId").toString());
+                        currentPoet.setUsername(newUser.get("username").toString());
+                        currentPoet.setPoems((ArrayList<String>) newUser.get("poems"));
+                        currentPoet.setSnappedPoems((ArrayList<String>) newUser.get("snappedPoems"));
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private final View.OnClickListener mainActions = new View.OnClickListener() {
@@ -88,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
                 switch (tab.getPosition()) {
                     case 0:
                         tab.setIcon(R.drawable.bookpurple);
+                        search.setText(null);
                         search.setHint("Search Poems...");
                         searchBar.setVisibility(View.VISIBLE);
                         search.setVisibility(View.VISIBLE);
@@ -104,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
                         tab.setIcon(R.drawable.profilepurple);
                         searchBar.setVisibility(View.INVISIBLE);
                         poetBar.setVisibility(View.VISIBLE);
-                        poetName.setText(newPoet.getUsername());
+                        poetName.setText(currentPoet.getUsername());
                 }
             }
 

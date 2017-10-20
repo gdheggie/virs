@@ -11,7 +11,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.gheggie.virs.LoginActivity"
-    android:background="@drawable/loginbg">
+    android:background="@drawable/background">
 
     <ImageView
         android:id="@+id/logo_view"
@@ -35,10 +35,10 @@
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="150dp"
-        app:layout_constraintTop_toBottomOf="@+id/logo_view"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp" >
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/password_layout">
 
         <android.support.design.widget.TextInputEditText
             android:id="@+id/username_field"
@@ -55,14 +55,14 @@
         android:id="@+id/password_layout"
         android:layout_width="275dp"
         android:layout_height="40dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/username_layout"
         android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp">
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/sign_in_button">
 
         <android.support.design.widget.TextInputEditText
             android:id="@+id/password_field"
@@ -81,14 +81,14 @@
         android:layout_width="275dp"
         android:layout_height="wrap_content"
         android:text="@string/signin"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/password_layout"
         android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp" />
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/orText" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -98,15 +98,15 @@
         android:text="@string/or"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:layout_marginTop="24dp"
-        app:layout_constraintTop_toBottomOf="@+id/sign_in_button"
         android:id="@+id/orText"
         android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp" />
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/twitter_button" />
 
     <Button
         android:theme="@style/AppTheme.TwitterButton"
@@ -114,14 +114,14 @@
         android:layout_width="275dp"
         android:layout_height="wrap_content"
         android:text="@string/sign_in_with_twitter"
-        android:layout_marginTop="24dp"
-        app:layout_constraintTop_toBottomOf="@+id/orText"
         android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp" />
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="50dp"
+        app:layout_constraintBottom_toTopOf="@+id/sign_up_here" />
 
     <TextView
         android:layout_width="wrap_content"

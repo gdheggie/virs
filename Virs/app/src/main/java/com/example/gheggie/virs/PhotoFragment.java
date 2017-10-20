@@ -1,33 +1,34 @@
 package com.example.gheggie.virs;
 
 import android.app.Fragment;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -36,8 +37,12 @@ public class PhotoFragment extends Fragment implements View.OnClickListener {
     private static final int REQUEST_PHOTO = 0x0111;
     public CircleImageView crop_view;
     public static final String TAG = "PhotoFragment.TAG";
+    private TextView mUsername;
 //    private StorageReference fbStorage = FirebaseStorage.getInstance().getReference();
-//    private DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+    private DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+    private ArrayList<String> usernames = new ArrayList<>();
+    private String username;
+    private Button finishButton;
 
     public static PhotoFragment newInstance() {
         return new PhotoFragment();
@@ -54,26 +59,63 @@ public class PhotoFragment extends Fragment implements View.OnClickListener {
         super.onActivityCreated(savedInstanceState);
         crop_view = (CircleImageView)getActivity().findViewById(R.id.cropped_view);
         Button selectButton = (Button)getActivity().findViewById(R.id.select_button);
-        Button finishButton = (Button)getActivity().findViewById(R.id.crop_button);
+        finishButton = (Button)getActivity().findViewById(R.id.crop_button);
+        mUsername = (TextView)getActivity().findViewById(R.id.username_field2);
         selectButton.setOnClickListener(this);
         finishButton.setOnClickListener(this);
+        finishButton.setText(R.string.check);
     }
 
     private void saveUser() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
+        username = mUsername.getText().toString().trim();
+        grabUsernames();
         // save user to database & local storage
         if (user != null) {
-            ArrayList<String> poems = new ArrayList<>();
-            ArrayList<String> snappedPoems = new ArrayList<>();
-            Poet newPoet = new Poet(VirsUtils.USERNAME.toLowerCase(), user.getUid(), poems, snappedPoems);
-            databaseRef.child("Users").child(user.getUid()).setValue(newPoet);
-            VirsUtils.savePoet(getActivity(), newPoet);
+            if (TextUtils.isEmpty(username)) {
+                mUsername.setError("Choose a username");
+            } else if(finishButton.getText().equals("Finish")){
+                ArrayList<String> poems = new ArrayList<>();
+                ArrayList<String> snappedPoems = new ArrayList<>();
+                Poet newPoet = new Poet(username.toLowerCase(), user.getUid(), poems, snappedPoems);
+                database.child("Users").child(user.getUid()).setValue(newPoet);
+                removeFragment();
+                getActivity().finish();
+                startActivity(new Intent(getActivity(), MainActivity.class));
+            }
         }
+    }
 
-        removeFragment();
-        getActivity().finish();
-        startActivity(new Intent(getActivity(), MainActivity.class));
+    private void grabUsernames() {
+        usernames.clear();
+        database.child("Users").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, Object> fbUsernames = (Map<String, Object>) dataSnapshot.getValue();
+                for(Map.Entry<String, Object> users : fbUsernames.entrySet()){
+                    Map newUser = (Map)users.getValue();
+                    usernames.add(newUser.get("username").toString());
+                }
+                checkUsername(usernames);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void checkUsername(ArrayList<String> names){
+        Log.d("USERNAMES", names.toString());
+        if(names.contains(username)) {
+            mUsername.setError("Username already exists");
+        } else {
+            Drawable myIcon = getResources().getDrawable(android.R.drawable.checkbox_on_background, null);
+            myIcon.setBounds(0, 0, myIcon.getIntrinsicWidth(), myIcon.getIntrinsicHeight());
+            mUsername.setError("Avaliable", myIcon);
+            finishButton.setText(R.string.finish);
+        }
     }
 
     @Override

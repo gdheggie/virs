@@ -51,6 +51,20 @@
                 app:layout_constraintVertical_bias="0.454"
                 android:layout_marginEnd="8dp" />
 
+            <ImageButton
+                android:id="@+id/delete_poem_2"
+                android:contentDescription="@string/live_stream"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@android:drawable/ic_delete"
+                android:background="@android:color/transparent"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="8dp" />
+
         </android.support.constraint.ConstraintLayout>
 
     </android.support.v7.widget.Toolbar>
@@ -62,7 +76,7 @@
         android:layout_height="84dp"
         app:civ_border_width="0.5dp"
         app:civ_border_color="@color/virsPurple"
-        android:src="@drawable/virsicon"
+        android:src="@color/feedBackground"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginStart="16dp"
         android:layout_marginTop="20dp"

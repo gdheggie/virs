@@ -12,15 +12,6 @@ class Poem implements Serializable {
     private String poetId;
     private int snapCount;
 
-    Poem(String _title, String _poem,String _poet, String _date, String _id, int _snaps) {
-        title = _title;
-        poem = _poem;
-        poet = _poet;
-        date = _date;
-        poemId = _id;
-        snapCount = _snaps;
-    }
-
     Poem(String _title, String _poem,String _poet, String _date, String _id, String _poetID, int _snaps) {
         title = _title;
         poem = _poem;

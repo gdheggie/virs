@@ -28,7 +28,6 @@ public class RegisterFragment extends Fragment{
     public static final String TAG = "RegisterFragment.TAG";
     private FirebaseAuth firebaseAuth;
     private EditText userEmail;
-    private EditText username2;
     private EditText passwordText2;
     private EditText confirmPasswordText;
     private ProgressDialog progressDialog;
@@ -49,7 +48,6 @@ public class RegisterFragment extends Fragment{
         firebaseAuth = FirebaseAuth.getInstance();
 
         userEmail = (EditText) getActivity().findViewById(R.id.email_field);
-        username2 = (EditText) getActivity().findViewById(R.id.username_field2);
         passwordText2 = (EditText)getActivity().findViewById(R.id.password_field2);
         confirmPasswordText = (EditText)getActivity().findViewById(R.id.re_password_field);
         TextView signInText = (TextView)getActivity().findViewById(R.id.sign_in_here);
@@ -92,14 +90,11 @@ public class RegisterFragment extends Fragment{
 
     private void userRegistration() {
         String email = userEmail.getText().toString().trim();
-        VirsUtils.USERNAME = username2.getText().toString().trim();
         String userPassword = passwordText2.getText().toString().trim();
         String confirmPassword = confirmPasswordText.getText().toString().trim();
 
         if(TextUtils.isEmpty(email)) {
             userEmail.setError("Enter an Email");
-        } else if (TextUtils.isEmpty(VirsUtils.USERNAME)) {// if email field is empty, notify user
-            username2.setError("Enter Username");
         } else if (TextUtils.isEmpty(userPassword)) { // if password field is empty, notify user
             passwordText2.setError("Enter a Password");
         }  else if (!userPassword.equals(confirmPassword)){
@@ -131,7 +126,6 @@ public class RegisterFragment extends Fragment{
                                         "Registration Unsuccessful. Try Again!",
                                         Toast.LENGTH_SHORT).show();
                                 userEmail.setText(null);
-                                username2.setText(null);
                                 passwordText2.setText(null);
                                 confirmPasswordText.setText(null);
                             }

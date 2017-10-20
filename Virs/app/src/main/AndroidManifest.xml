@@ -12,17 +12,26 @@
         android:roundIcon="@drawable/virsicon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LoginActivity">
+        <activity android:name=".LoginActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
-        <activity android:name=".NewPoemActivity" />
-        <activity android:name=".PoemActivity"></activity>
-        <activity android:name=".UsersProfileActivity"></activity>
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".NewPoemActivity"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".PoemActivity"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".UsersProfileActivity"
+            android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>
