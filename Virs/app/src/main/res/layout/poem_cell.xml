@@ -44,12 +44,13 @@
 
     <TextView
         android:id="@+id/poem_preview"
-        android:layout_width="275dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/roses_are_red_in_the_sky_violets_are_blue_in_the_ocean_come_to_me_where_i_lay_down"
         android:layout_marginTop="6dp"
         android:textSize="16sp"
-        android:maxLength="90"
+        android:maxHeight="60dp"
+        android:maxWidth="265dp"
         android:textColor="@color/preview_poem"
         app:layout_constraintTop_toBottomOf="@+id/poet_name"
         android:layout_marginStart="20dp"
@@ -65,22 +66,9 @@
         android:textSize="16sp"
         android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@+id/poet_image"
-        android:layout_marginStart="42dp"
+        android:layout_marginStart="25dp"
+        android:textAlignment="center"
         app:layout_constraintLeft_toLeftOf="parent" />
-
-    <TextView
-        android:id="@+id/snap_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/snaps"
-        android:textSize="15sp"
-        android:layout_marginStart="13dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/poem_preview"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintHorizontal_bias="0.47"
-        android:layout_marginTop="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/snap_count" />
 
 
 </android.support.constraint.ConstraintLayout>

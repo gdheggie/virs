@@ -38,11 +38,11 @@ public class PhotoFragment extends Fragment implements View.OnClickListener {
     public CircleImageView crop_view;
     public static final String TAG = "PhotoFragment.TAG";
     private TextView mUsername;
-//    private StorageReference fbStorage = FirebaseStorage.getInstance().getReference();
     private DatabaseReference database = FirebaseDatabase.getInstance().getReference();
     private ArrayList<String> usernames = new ArrayList<>();
     private String username;
     private Button finishButton;
+    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
     public static PhotoFragment newInstance() {
         return new PhotoFragment();
@@ -64,10 +64,13 @@ public class PhotoFragment extends Fragment implements View.OnClickListener {
         selectButton.setOnClickListener(this);
         finishButton.setOnClickListener(this);
         finishButton.setText(R.string.check);
+
+        if(user.getDisplayName() != null) {
+            mUsername.setText(user.getDisplayName());
+        }
     }
 
     private void saveUser() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         username = mUsername.getText().toString().trim();
         grabUsernames();
         // save user to database & local storage

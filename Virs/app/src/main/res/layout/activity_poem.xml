@@ -151,6 +151,7 @@
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:layout_marginStart="50dp"
+        android:src="@drawable/snap"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginBottom="24dp"
         app:layout_constraintBottom_toTopOf="@+id/upload_poem" />
@@ -160,6 +161,7 @@
         android:id="@+id/poem_share"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:src="@drawable/twittershare"
         android:background="@android:color/transparent"
         android:scaleType="fitXY"
         app:layout_constraintLeft_toRightOf="@+id/user_snaps"

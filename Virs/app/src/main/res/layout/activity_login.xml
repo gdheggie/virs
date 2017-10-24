@@ -79,7 +79,7 @@
         android:theme="@style/AppTheme.PurpleButton"
         android:id="@+id/sign_in_button"
         android:layout_width="275dp"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:text="@string/signin"
         android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -108,12 +108,10 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/twitter_button" />
 
-    <Button
-        android:theme="@style/AppTheme.TwitterButton"
+    <com.twitter.sdk.android.core.identity.TwitterLoginButton
         android:id="@+id/twitter_button"
         android:layout_width="275dp"
         android:layout_height="wrap_content"
-        android:text="@string/sign_in_with_twitter"
         android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginRight="8dp"

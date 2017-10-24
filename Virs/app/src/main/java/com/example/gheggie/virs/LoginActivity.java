@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,8 +18,20 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.TwitterAuthProvider;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.DefaultLogger;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.Twitter;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterConfig;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -26,6 +39,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private EditText passwordText;
     private FirebaseAuth firebaseAuth;
     private ProgressDialog progressDialog;
+    private TwitterLoginButton twitterSignIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +48,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         // Set Up UI
         Button signin = (Button)findViewById(R.id.sign_in_button);
-        Button twitterSignIn = (Button)findViewById(R.id.twitter_button);
+        twitterSignIn = (TwitterLoginButton)findViewById(R.id.twitter_button);
         signin.setOnClickListener(this);
         twitterSignIn.setOnClickListener(this);
         usernameText = (EditText)findViewById(R.id.username_field);
@@ -43,11 +57,60 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         signUpText.setOnClickListener(this);
         progressDialog = new ProgressDialog(this);
         firebaseAuth = FirebaseAuth.getInstance();
+        configTwitterSignIn();
 
         if(firebaseAuth.getCurrentUser() != null) {
             // Start Poem Feed
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
         }
+    }
+
+    private void configTwitterSignIn(){
+        TwitterConfig config = new TwitterConfig.Builder(this)
+                .logger(new DefaultLogger(Log.DEBUG))
+                .twitterAuthConfig(new TwitterAuthConfig("8eSH8SWoMv68ELT2x79ovdHb6", "6VQ4ITJp9UQICsf6poGcwi1Xe8iQJ33TVipBYiz1LZTPlQBLnA"))
+                .debug(true)
+                .build();
+        Twitter.initialize(config);
+
+        twitterSignIn.setCallback(new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                AuthCredential credential = TwitterAuthProvider.getCredential(
+                        result.data.getAuthToken().token,
+                        result.data.getAuthToken().secret);
+                firebaseAuth.signInWithCredential(credential)
+                        .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if(task.isSuccessful()){
+                                    PhotoFragment photoFrag = PhotoFragment.newInstance();
+                                    getFragmentManager().beginTransaction().replace(
+                                            R.id.login_frame,
+                                            photoFrag,
+                                            PhotoFragment.TAG
+                                    ).commit();
+                                } else {
+                                    Toast.makeText(LoginActivity.this
+                                            , "Twitter sign in unsuccessful"
+                                            , Toast.LENGTH_SHORT
+                                    ).show();
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                Toast.makeText(getApplicationContext(), exception.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        twitterSignIn.onActivityResult(requestCode, resultCode, data);
     }
 
     // check connection

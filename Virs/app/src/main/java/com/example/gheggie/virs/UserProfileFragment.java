@@ -1,7 +1,5 @@
 package com.example.gheggie.virs;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v4.app.Fragment;
@@ -89,6 +87,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         }
         poemLine = (ImageView)getActivity().findViewById(R.id.line_view);
         snappedLine = (ImageView)getActivity().findViewById(R.id.line_view_2);
+        snapCount.setText("0");
     }
 
     private void setUserInfo(){
@@ -99,10 +98,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
             grabUserPoems(currentPoet.getPoems());
         }
 
-        if(currentPoet.getSnappedPoems() == null) {
-            snapCount.setText("0");
-        } else {
-            snapCount.setText(String.valueOf(currentPoet.getSnappedPoems().size()));
+        if(currentPoet.getSnappedPoems() != null) {
             grabUserSnappedPoems(currentPoet.getSnappedPoems());
         }
     }
@@ -126,20 +122,38 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == 0) {
-            if(currentPoet.getPoems() != null) {
-                grabUserPoems(currentPoet.getPoems());
-                poemCount.setText(String.valueOf(currentPoet.getPoems().size()));
+            if(otherPoet != null) {
+                if(otherPoet.getPoems() != null) {
+                    grabUserPoems(otherPoet.getPoems());
+                    poemCount.setText(String.valueOf(otherPoet.getPoems().size()));
+                } else {
+                    poems.clear();
+                    refreshUserList();
+                    poemCount.setText("0");
+                    snapCount.setText("0");
+                }
+                if (otherPoet.getSnappedPoems() != null) {
+                    grabUserSnappedPoems(otherPoet.getSnappedPoems());
+                } else {
+                    snappedPoems.clear();
+                    refreshSnapList();
+                }
             } else {
-                poems.clear();
-                refreshUserList();
-                poemCount.setText("0");
-            }
-            if (currentPoet.getSnappedPoems() != null) {
-                grabUserSnappedPoems(currentPoet.getSnappedPoems());
-            } else {
-                snappedPoems.clear();
-                snappedPoems.clear();
-                refreshSnapList();
+                if(currentPoet.getPoems() != null) {
+                    grabUserPoems(currentPoet.getPoems());
+                    poemCount.setText(String.valueOf(currentPoet.getPoems().size()));
+                } else {
+                    poems.clear();
+                    refreshUserList();
+                    poemCount.setText("0");
+                    snapCount.setText("0");
+                }
+                if (currentPoet.getSnappedPoems() != null) {
+                    grabUserSnappedPoems(currentPoet.getSnappedPoems());
+                } else {
+                    snappedPoems.clear();
+                    refreshSnapList();
+                }
             }
         }
     }
@@ -173,14 +187,13 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         otherPoet = poet;
         if(otherPoet.getSnappedPoems() != null) {
             grabUserSnappedPoems(otherPoet.getSnappedPoems());
-        } else {
-            snapCount.setText("0");
         }
         if(otherPoet.getPoems() != null) {
             grabUserPoems(otherPoet.getPoems());
             poemCount.setText(String.valueOf(otherPoet.getPoems().size()));
         } else {
             poemCount.setText("0");
+            snapCount.setText("0");
         }
         userName.setText(otherPoet.getUsername());
         mUserBar.setVisibility(View.VISIBLE);
@@ -203,7 +216,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                                 , newPoem.get("poemId").toString(), newPoem.get("poetId").toString()
                                 , Integer.valueOf(newPoem.get("snapCount").toString())));
                         refreshUserList();
-                        totalSnaps();
+                        totalSnaps(poems);
                     }
                 }
             }
@@ -243,9 +256,9 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         });
     }
 
-    private void totalSnaps(){
+    private void totalSnaps(ArrayList<Poem> poemsList){
         int totalSnaps = 0;
-        for(Poem p : poems) {
+        for (Poem p : poemsList) {
             totalSnaps += p.getSnapCount();
         }
         snapCount.setText(String.valueOf(totalSnaps));

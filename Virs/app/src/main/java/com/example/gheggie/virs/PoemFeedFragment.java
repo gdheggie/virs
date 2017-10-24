@@ -28,10 +28,8 @@ import java.util.Map;
 public class PoemFeedFragment extends Fragment {
 
     private GridView poemGrid;
-    ArrayList<Poem> poems = new ArrayList<>();
-    PoemFeedAdapter poemAdapter;
+    private ArrayList<Poem> poems = new ArrayList<>();
     private ProgressBar poemProgress;
-    private ConstraintLayout feedLayout;
 
     @Nullable
     @Override
@@ -47,7 +45,6 @@ public class PoemFeedFragment extends Fragment {
         checkConnection();
         poemProgress = (ProgressBar)getActivity().findViewById(R.id.feed_progress);
         poemProgress.setVisibility(View.VISIBLE);
-        feedLayout = (ConstraintLayout)getActivity().findViewById(R.id.poemfeed_background);
     }
 
     private void grabPoemFeed(){
@@ -77,7 +74,7 @@ public class PoemFeedFragment extends Fragment {
     }
 
     private void refreshPoems() {
-        poemAdapter = new PoemFeedAdapter(poems, getActivity());
+        PoemFeedAdapter poemAdapter = new PoemFeedAdapter(poems, getActivity());
         poemGrid.setAdapter(poemAdapter);
         poemAdapter.notifyDataSetChanged();
     }

@@ -66,13 +66,19 @@ public class CustomAdapter extends BaseAdapter {
         Poem poem = (Poem) getItem(position);
         if(type.equals("Snapped") || type.equals("Events")) {
             viewHolder.image.setVisibility(View.VISIBLE);
+            if(type.equals("Snapped")) {
+                viewHolder.image.setImageResource(R.color.feedBackground);
+            }
         } else {
             viewHolder.image.setVisibility(View.GONE);
         }
         viewHolder.title.setTextColor(ContextCompat.getColor(mContext, R.color.blackColor));
         viewHolder.title.setText(poem.getTitle());
+
         String[] poemDate = poem.getDate().split("-");
         viewHolder.date.setText(poemDate[0]);
+
+
         return convertView;
     }
 }

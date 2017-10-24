@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -45,16 +44,14 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
         shareLabel = (TextView)findViewById(R.id.share_label);
         poemDate = (TextView)findViewById(R.id.when_text);
         snap = (ImageButton)findViewById(R.id.poem_snap);
-        snap.setTag(R.drawable.snap);
-        snap.setImageResource(R.drawable.snap);
         sharePoem = (ImageButton)findViewById(R.id.poem_share);
-        sharePoem.setImageResource(R.drawable.twittershare);
-        sharePoem.setTag(R.drawable.twittershare);
         poemIntent = getIntent();
         snapCount.setOnClickListener(this);
         snap.setOnClickListener(this);
         shareLabel.setOnClickListener(this);
         sharePoem.setOnClickListener(this);
+        snap.setTag(R.drawable.snap);
+        sharePoem.setTag(R.drawable.twittershare);
 
         Button upload = (Button)findViewById(R.id.upload_poem);
         upload.setOnClickListener(this);
@@ -65,6 +62,25 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
 
         }
         showPoem();
+
+        if(newPoem.getPoetId().equals(currentPoet.getUserId())) {
+            snap.setClickable(false);
+            snapCount.setClickable(false);
+        }
+
+        setUpSnapCount();
+    }
+
+    private void setUpSnapCount(){
+        if(currentPoet.getSnappedPoems() != null) {
+            if (!currentPoet.getSnappedPoems().contains(newPoem.getPoemId())) {
+                snap.setTag(R.drawable.snap);
+                snap.setImageResource(R.drawable.snap);
+            } else {
+                snap.setTag(R.drawable.snapped);
+                snap.setImageResource(R.drawable.snapped);
+            }
+        }
     }
 
     // set toolbar up
@@ -81,6 +97,7 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
                     editIntent.putExtra(VirsUtils.NEW_POEM, newPoem);
                     startActivity(editIntent);
                 }
+
             }
         });
         deletePoemButton = (ImageButton)findViewById(R.id.delete_poem_2);
@@ -92,6 +109,7 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
+    // click listener for snap and share
     @Override
     public void onClick(View v) {
         if(v.getId() == R.id.poem_snap || v.getId() == R.id.user_snaps) {
@@ -107,7 +125,7 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void showPoem(){
-        //show preview poem
+        //show poem based on intent
         if(poemIntent.hasExtra(VirsUtils.NEW_POEM)) {
             newPoem = (Poem)poemIntent.getSerializableExtra(VirsUtils.NEW_POEM);
             populatePoem(newPoem);
@@ -151,16 +169,94 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void updateSnapCount(){
-        // TODO: Change snap count
+    private void updateSnapCount() {
+        // change snap count
+        int snapNumber = newPoem.getSnapCount();
+        if (currentPoet.getSnappedPoems() != null) {
+            if (!currentPoet.getSnappedPoems().contains(newPoem.getPoemId())) {
+                snapNumber += 1;
+                newPoem.setSnapCount(snapNumber);
+                currentPoet.getSnappedPoems().add(newPoem.getPoemId());
+                addSnappedPoem(newPoem);
+                snapCount.setText(String.valueOf(newPoem.getSnapCount()));
+                if (newPoem.getSnapCount() == 1) {
+                    String snaps = newPoem.getSnapCount() + " snap";
+                    snapCount.setText(snaps);
+                } else {
+                    String snaps = newPoem.getSnapCount() + " snaps";
+                    snapCount.setText(snaps);
+                }
+            } else {
+                snapNumber -= 1;
+                newPoem.setSnapCount(snapNumber);
+                currentPoet.getSnappedPoems().remove(newPoem.getPoemId());
+                removeSnappedPoem(newPoem);
+                snapCount.setText(String.valueOf(newPoem.getSnapCount()));
+                if (newPoem.getSnapCount() == 1) {
+                    String snaps = newPoem.getSnapCount() + " snap";
+                    snapCount.setText(snaps);
+                } else {
+                    String snaps = newPoem.getSnapCount() + " snaps";
+                    snapCount.setText(snaps);
+                }
+            }
+
+        } else {
+            ArrayList<String> snappedList = new ArrayList<>();
+            snappedList.add(newPoem.getPoemId());
+            currentPoet.setSnappedPoems(snappedList);
+            snapNumber = newPoem.getSnapCount();
+            snapNumber += 1;
+            newPoem.setSnapCount(snapNumber);
+            if (newPoem.getSnapCount() == 1) {
+                String snaps = newPoem.getSnapCount() + " snap";
+                snapCount.setText(snaps);
+            } else {
+                String snaps = newPoem.getSnapCount() + " snaps";
+                snapCount.setText(snaps);
+            }
+        }
+
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+        database.child("Poems").child(newPoem.getPoemId()).removeValue();
+        database.child("Poems").child(newPoem.getPoemId()).setValue(newPoem);
+        database.child("Users").child(currentPoet.getUserId()).removeValue();
+        database.child("Users").child(currentPoet.getUserId()).setValue(currentPoet);
     }
 
     private void shareToTwitter(){
         // TODO: Share to Twitter
     }
 
+    // add poem to snapped list
+    private void addSnappedPoem(Poem poem) {
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+
+        if(currentPoet.getSnappedPoems() == null) {
+            ArrayList<String> snappedPoems = new ArrayList<>();
+            snappedPoems.add(poem.getPoemId());
+            currentPoet.setSnappedPoems(snappedPoems);
+        } else {
+            currentPoet.getSnappedPoems().add(poem.getPoemId());
+        }
+
+        database.child("Users").child(currentPoet.getUserId()).removeValue();
+        database.child("Users").child(currentPoet.getUserId()).setValue(currentPoet);
+    }
+
+    // remove poem from snapped list
+    private void removeSnappedPoem(Poem poem) {
+        DatabaseReference database =
+                FirebaseDatabase.getInstance().getReference();
+
+        currentPoet.getSnappedPoems().remove(poem.getPoemId());
+
+        database.child("Users").child(currentPoet.getUserId()).removeValue();
+        database.child("Users").child(currentPoet.getUserId()).setValue(currentPoet);
+    }
+
+    //Save Poem to Database
     private void uploadPoem(Poem poem){
-        //Save Poem to Database
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         database.child("Poems").child(poem.getPoemId()).setValue(poem);
 
@@ -176,7 +272,6 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
         database.child("Users").child(currentPoet.getUserId()).setValue(currentPoet);
     }
 
-
     private void deletePoemAlert(final Poem poem) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Delete " + poem.getTitle());
@@ -189,8 +284,8 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
         }).show();
     }
 
+    //Delete Poem from Database
     private void deleteUserPoem(Poem poem){
-        //Delete Poem from Database
         DatabaseReference database =
                 FirebaseDatabase.getInstance().getReference();
         database.child("Poems").child(poem.getPoemId()).removeValue();

@@ -89,7 +89,12 @@ class PoemFeedAdapter extends BaseAdapter{
                 mContext.startActivity(poemIntent);
             }
         });
-        viewHolder.poemPreview.setText(poem.getPoem());
+        if(poem.getPoem().length() > 90) {
+            String previewOfPoem = poem.getPoem().substring(0,90);
+            viewHolder.poemPreview.setText(previewOfPoem + "...");
+        } else {
+            viewHolder.poemPreview.setText(poem.getPoem());
+        }
         viewHolder.poemPreview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,7 +103,15 @@ class PoemFeedAdapter extends BaseAdapter{
                 mContext.startActivity(poemIntent);
             }
         });
-        viewHolder.snapCount.setText(String.valueOf(poem.getSnapCount()));
+        if (poem.getSnapCount() == 1) {
+            String snaps = " " + poem.getSnapCount() + "\n  snap";
+            viewHolder.snapCount.setText(String.valueOf(poem.getSnapCount()));
+            viewHolder.snapCount.setText(snaps);
+        } else {
+            String snaps = poem.getSnapCount() + "\nsnaps";
+            viewHolder.snapCount.setText(snaps);
+        }
+
         return convertView;
     }
 }
