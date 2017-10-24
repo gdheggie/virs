@@ -57,7 +57,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         signUpText.setOnClickListener(this);
         progressDialog = new ProgressDialog(this);
         firebaseAuth = FirebaseAuth.getInstance();
-        configTwitterSignIn();
+      //  configTwitterSignIn();
 
         if(firebaseAuth.getCurrentUser() != null) {
             // Start Poem Feed
