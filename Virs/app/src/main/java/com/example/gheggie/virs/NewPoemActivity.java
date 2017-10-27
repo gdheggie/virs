@@ -20,8 +20,10 @@ public class NewPoemActivity extends AppCompatActivity implements View.OnClickLi
 
     private EditText poemTitle;
     private EditText poemText;
-    private Intent editIntent;
     private Poem editPoem;
+    private int snapCount;
+    private String poemId;
+    private String oldDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,16 +31,23 @@ public class NewPoemActivity extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.activity_new_poem);
         setupToolBar();
 
-        editIntent = getIntent();
+        Intent editIntent = getIntent();
         Button previewButton = (Button)findViewById(R.id.preview_button);
         previewButton.setOnClickListener(this);
         poemTitle = (EditText)findViewById(R.id.title_field);
         poemText = (EditText)findViewById(R.id.poem_field);
 
         if(editIntent.hasExtra(VirsUtils.NEW_POEM)){
-            editPoem = (Poem)editIntent.getSerializableExtra(VirsUtils.NEW_POEM);
+            editPoem = (Poem) editIntent.getSerializableExtra(VirsUtils.NEW_POEM);
             poemTitle.setText(editPoem.getTitle());
             poemText.setText(editPoem.getPoem());
+        } else if (editIntent.hasExtra(VirsUtils.EDIT_POEM)) {
+            editPoem = (Poem) editIntent.getSerializableExtra(VirsUtils.EDIT_POEM);
+            poemTitle.setText(editPoem.getTitle());
+            poemText.setText(editPoem.getPoem());
+            snapCount = editPoem.getSnapCount();
+            poemId = editPoem.getPoemId();
+            oldDate = editPoem.getDate();
         }
     }
 
@@ -73,18 +82,30 @@ public class NewPoemActivity extends AppCompatActivity implements View.OnClickLi
         }else {
             String myFormat = "MM/dd/yy-hh:mm:ss";
             String saveFormat = "MMddyyyhhmmss";
-            SimpleDateFormat savedf = new SimpleDateFormat(saveFormat, Locale.US);
+            SimpleDateFormat savedFormat = new SimpleDateFormat(saveFormat, Locale.US);
             SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
             Date date = new Date();
-            String poemID = poemTitleText.trim() + savedf.format(date);
-            editPoem = new Poem(poemTitleText, poem
-                    , currentPoet.getUsername(),sdf.format(date), poemID, currentPoet.getUserId()
-                    , 0);
-            // Go To Poem Screen with preview of poem
-            finish();
-            Intent poemIntent = new Intent(NewPoemActivity.this, PoemActivity.class);
-            poemIntent.putExtra(VirsUtils.NEW_POEM, editPoem);
-            startActivity(poemIntent);
+            String poemID = poemTitleText.trim() + savedFormat.format(date);
+            if(editPoem.getPoetId() != null) {
+                editPoem = new Poem(poemTitleText, poem
+                        , currentPoet.getUsername(), oldDate, poemId, currentPoet.getUserId()
+                        , snapCount);
+                // Go To Poem Screen with preview of Edited poem
+                finish();
+                Intent poemIntent = new Intent(NewPoemActivity.this, PoemActivity.class);
+                poemIntent.putExtra(VirsUtils.EDIT_POEM, editPoem);
+                setResult(0,poemIntent);
+                finish();
+            } else {
+                editPoem = new Poem(poemTitleText, poem
+                        , currentPoet.getUsername(), sdf.format(date), poemID, currentPoet.getUserId()
+                        , 0);
+                // Go To Poem Screen with preview of poem
+                finish();
+                Intent poemIntent = new Intent(NewPoemActivity.this, PoemActivity.class);
+                poemIntent.putExtra(VirsUtils.NEW_POEM, editPoem);
+                startActivity(poemIntent);
+            }
         }
     }
 }

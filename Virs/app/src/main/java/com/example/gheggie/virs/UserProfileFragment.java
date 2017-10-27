@@ -1,5 +1,7 @@
 package com.example.gheggie.virs;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v4.app.Fragment;
@@ -16,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -75,19 +78,49 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         userSnapped.setOnClickListener(this);
         mUserBar = (Toolbar) getActivity().findViewById(R.id.user_bar);
         userName = (TextView) getActivity().findViewById(R.id.user_name);
+        ImageButton back = (ImageButton) getActivity().findViewById(R.id.back_2);
+        ImageButton editProfile = (ImageButton)getActivity().findViewById(R.id.edit_profile);
+        editProfile.setOnClickListener(this);
         Intent userIntent = getActivity().getIntent();
         if(userIntent.hasExtra(VirsUtils.USER_CLICKED)){
             grabUserClicked();
             userId = getArguments().getString(VirsUtils.USER_ID);
-            ImageButton back = (ImageButton) getActivity().findViewById(R.id.back_2);
-            back.setOnClickListener(this);
+            back.setVisibility(View.VISIBLE);
+            back.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getActivity().finish();
+                }
+            });
+            editProfile.setVisibility(View.INVISIBLE);
         } else {
             setUserInfo();
-            mUserBar.setVisibility(View.GONE);
+            userName.setText(currentPoet.getUsername());
+            back.setImageResource(R.drawable.logout);
+            back.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertSignOut();
+                }
+            });
+            editProfile.setVisibility(View.VISIBLE);
         }
         poemLine = (ImageView)getActivity().findViewById(R.id.line_view);
         snappedLine = (ImageView)getActivity().findViewById(R.id.line_view_2);
         snapCount.setText("0");
+    }
+
+    private void alertSignOut() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Sign Out");
+        builder.setNegativeButton("NO", null);
+        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                FirebaseAuth.getInstance().signOut();
+                getActivity().finish();
+            }
+        }).show();
     }
 
     private void setUserInfo(){
@@ -113,7 +146,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
             } else if (parent.getId() == R.id.user_snapped_list) {
                 Intent poemIntent = new Intent(getActivity(), PoemActivity.class);
                 poemIntent.putExtra(VirsUtils.SNAPPED_POEM, snappedPoems.get(position));
-                startActivity(poemIntent);
+                startActivityForResult(poemIntent, 0);
             }
         }
     };
@@ -122,40 +155,41 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == 0) {
-            if(otherPoet != null) {
-                if(otherPoet.getPoems() != null) {
-                    grabUserPoems(otherPoet.getPoems());
-                    poemCount.setText(String.valueOf(otherPoet.getPoems().size()));
+                if (otherPoet.getUserId() != null) {
+                    if (otherPoet.getPoems() != null) {
+                        grabUserPoems(otherPoet.getPoems());
+                        poemCount.setText(String.valueOf(otherPoet.getPoems().size()));
+                    } else {
+                        poems.clear();
+                        refreshUserList();
+                        poemCount.setText("0");
+                        snapCount.setText("0");
+                    }
+                    if (otherPoet.getSnappedPoems() != null) {
+                        grabUserSnappedPoems(otherPoet.getSnappedPoems());
+                    } else {
+                        snappedPoems.clear();
+                        refreshSnapList();
+                    }
                 } else {
-                    poems.clear();
-                    refreshUserList();
-                    poemCount.setText("0");
-                    snapCount.setText("0");
-                }
-                if (otherPoet.getSnappedPoems() != null) {
-                    grabUserSnappedPoems(otherPoet.getSnappedPoems());
-                } else {
-                    snappedPoems.clear();
-                    refreshSnapList();
-                }
-            } else {
-                if(currentPoet.getPoems() != null) {
-                    grabUserPoems(currentPoet.getPoems());
-                    poemCount.setText(String.valueOf(currentPoet.getPoems().size()));
-                } else {
-                    poems.clear();
-                    refreshUserList();
-                    poemCount.setText("0");
-                    snapCount.setText("0");
-                }
-                if (currentPoet.getSnappedPoems() != null) {
-                    grabUserSnappedPoems(currentPoet.getSnappedPoems());
-                } else {
-                    snappedPoems.clear();
-                    refreshSnapList();
+                    userName.setText(currentPoet.getUsername());
+                    if (currentPoet.getPoems() != null) {
+                        grabUserPoems(currentPoet.getPoems());
+                        poemCount.setText(String.valueOf(currentPoet.getPoems().size()));
+                    } else {
+                        poems.clear();
+                        refreshUserList();
+                        poemCount.setText("0");
+                        snapCount.setText("0");
+                    }
+                    if (currentPoet.getSnappedPoems() != null) {
+                        grabUserSnappedPoems(currentPoet.getSnappedPoems());
+                    } else {
+                        snappedPoems.clear();
+                        refreshSnapList();
+                    }
                 }
             }
-        }
     }
 
     private void grabUserClicked(){
@@ -270,8 +304,10 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
             setUpTabImitator(true);
         } else if (v.getId() == R.id.snapped_click){
             setUpTabImitator(false);
-        } else if (v.getId() == R.id.back_2) {
-            getActivity().finish();
+        } else if (v.getId() == R.id.edit_profile){
+            Intent editIntent = new Intent(getActivity(), EditActivity.class);
+            editIntent.putExtra(VirsUtils.EDIT_PROFILE, currentPoet);
+            startActivityForResult(editIntent, 0);
         }
     }
 

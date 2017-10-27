@@ -114,6 +114,7 @@ class PoemFeedAdapter extends BaseAdapter{
 
         return convertView;
     }
+
 }
 
 class ViewHolder{

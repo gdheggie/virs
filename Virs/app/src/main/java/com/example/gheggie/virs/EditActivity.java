@@ -1,22 +1,19 @@
 package com.example.gheggie.virs;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,41 +29,50 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class PhotoFragment extends Fragment implements View.OnClickListener {
+import static com.example.gheggie.virs.VirsUtils.currentPoet;
+
+public class EditActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int REQUEST_PHOTO = 0x0111;
     public CircleImageView crop_view;
-    public static final String TAG = "PhotoFragment.TAG";
     private TextView mUsername;
     private DatabaseReference database = FirebaseDatabase.getInstance().getReference();
     private ArrayList<String> usernames = new ArrayList<>();
     private String username;
     private Button finishButton;
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-    public static PhotoFragment newInstance() {
-        return new PhotoFragment();
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.photo_fragment, container, false);
-    }
+    private Uri mCropImageUri;
+    private Intent editIntent;
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        crop_view = (CircleImageView)getActivity().findViewById(R.id.cropped_view);
-        Button selectButton = (Button)getActivity().findViewById(R.id.select_button);
-        finishButton = (Button)getActivity().findViewById(R.id.crop_button);
-        mUsername = (TextView)getActivity().findViewById(R.id.username_field2);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_edit_activty);
+        crop_view = (CircleImageView)findViewById(R.id.cropped_view);
+        Button selectButton = (Button)findViewById(R.id.select_button2);
+        ImageButton back = (ImageButton)findViewById(R.id.back_3);
+        finishButton = (Button)findViewById(R.id.check_finish);
+        mUsername = (TextView)findViewById(R.id.username_field2);
         selectButton.setOnClickListener(this);
         finishButton.setOnClickListener(this);
         finishButton.setText(R.string.check);
+        editIntent = getIntent();
 
         if(user.getDisplayName() != null) {
             mUsername.setText(user.getDisplayName());
+            back.setVisibility(View.GONE);
+        }
+
+        if(editIntent.hasExtra(VirsUtils.EDIT_PROFILE)) {
+            Poet poet = (Poet)editIntent.getSerializableExtra(VirsUtils.EDIT_PROFILE);
+            mUsername.setText(poet.getUsername());
+            back.setVisibility(View.VISIBLE);
+            back.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
         }
     }
 
@@ -78,13 +84,20 @@ public class PhotoFragment extends Fragment implements View.OnClickListener {
             if (TextUtils.isEmpty(username)) {
                 mUsername.setError("Choose a username");
             } else if(finishButton.getText().equals("Finish")){
-                ArrayList<String> poems = new ArrayList<>();
-                ArrayList<String> snappedPoems = new ArrayList<>();
-                Poet newPoet = new Poet(username.toLowerCase(), user.getUid(), poems, snappedPoems);
-                database.child("Users").child(user.getUid()).setValue(newPoet);
-                removeFragment();
-                getActivity().finish();
-                startActivity(new Intent(getActivity(), MainActivity.class));
+                if(currentPoet == null) {
+                    ArrayList<String> poems = new ArrayList<>();
+                    ArrayList<String> snappedPoems = new ArrayList<>();
+                    Poet newPoet = new Poet(username.toLowerCase(), user.getUid(), poems, snappedPoems);
+                    database.child("Users").child(user.getUid()).setValue(newPoet);
+                    finish();
+                    startActivity(new Intent(EditActivity.this, MainActivity.class));
+                }else {
+                    currentPoet.setUsername(username);
+                    database.child("Users").child(currentPoet.getUserId()).removeValue();
+                    database.child("Users").child(currentPoet.getUserId()).setValue(currentPoet);
+                    editIntent.putExtra(VirsUtils.EDIT_PROFILE, currentPoet);
+                    finish();
+                }
             }
         }
     }
@@ -110,7 +123,6 @@ public class PhotoFragment extends Fragment implements View.OnClickListener {
     }
 
     private void checkUsername(ArrayList<String> names){
-        Log.d("USERNAMES", names.toString());
         if(names.contains(username)) {
             mUsername.setError("Username already exists");
         } else {
@@ -123,10 +135,10 @@ public class PhotoFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.select_button) {
+        if(v.getId() == R.id.select_button2) {
             // open gallery
             selectPicture();
-        } else if (v.getId() == R.id.crop_button) {
+        } else if (v.getId() == R.id.check_finish) {
             // crop photo
             //savePhoto();
             saveUser();
@@ -139,11 +151,11 @@ public class PhotoFragment extends Fragment implements View.OnClickListener {
 
     private void getPermission() {
         //get permission if we do not have them yet
-        if(ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.READ_EXTERNAL_STORAGE)
+        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Request permissions if we don't have it.
-            ActivityCompat.requestPermissions(getActivity(),
+            ActivityCompat.requestPermissions(this,
                     new String[] {android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_PHOTO);
         } else {
             // open gallery
@@ -171,29 +183,8 @@ public class PhotoFragment extends Fragment implements View.OnClickListener {
         if(data != null) {
             BitmapFactory.Options opts = new BitmapFactory.Options();
             opts.inSampleSize = 4;
-            Uri mCropImageUri = data.getData();
+            mCropImageUri = data.getData();
             crop_view.setImageURI(mCropImageUri);
         }
-    }
-
-//    private void savePhoto(){
-//        final ProgressDialog progress = new ProgressDialog(getActivity());
-//        progress.setMessage("Saving user info...");
-//        progress.show();
-//        progress.dismiss();
-//        fbStorage.child("Photos").child(mCropImageUri.getLastPathSegment());
-//        fbStorage.putFile(mCropImageUri).addOnSuccessListener(
-//                getActivity(), new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//            @Override
-//            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                progress.dismiss();
-//
-//            }
-//        });
-//    }
-
-    private void removeFragment() {
-        getActivity().getFragmentManager().beginTransaction().
-                remove(this).commit();
     }
 }

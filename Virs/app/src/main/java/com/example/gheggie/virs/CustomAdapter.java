@@ -1,6 +1,7 @@
 package com.example.gheggie.virs;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class CustomAdapter extends BaseAdapter {
+class CustomAdapter extends BaseAdapter {
     private ArrayList<Poem> mPoems = new ArrayList<>();
     private Context mContext;
     private String type;
@@ -33,7 +34,7 @@ public class CustomAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        if( mPoems!= null &&
+        if (mPoems != null &&
                 position < mPoems.size() &&
                 position > -1) {
             return mPoems.get(position);
@@ -63,12 +64,10 @@ public class CustomAdapter extends BaseAdapter {
             viewHolder = (CustomViewHolder) convertView.getTag();
         }
 
-        Poem poem = (Poem) getItem(position);
-        if(type.equals("Snapped") || type.equals("Events")) {
+        final Poem poem = (Poem) getItem(position);
+        if (type.equals("Snapped")) {
             viewHolder.image.setVisibility(View.VISIBLE);
-            if(type.equals("Snapped")) {
-                viewHolder.image.setImageResource(R.color.feedBackground);
-            }
+            viewHolder.image.setImageResource(R.color.feedBackground);
         } else {
             viewHolder.image.setVisibility(View.GONE);
         }
@@ -78,7 +77,32 @@ public class CustomAdapter extends BaseAdapter {
         String[] poemDate = poem.getDate().split("-");
         viewHolder.date.setText(poemDate[0]);
 
+        viewHolder.title.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent poemIntent = new Intent(mContext, PoemActivity.class);
+                    poemIntent.putExtra(VirsUtils.FEED_POEM, poem);
+                    mContext.startActivity(poemIntent);
+                }
+            });
 
+        viewHolder.image.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent poemIntent = new Intent(mContext, PoemActivity.class);
+                    poemIntent.putExtra(VirsUtils.FEED_POEM, poem);
+                    mContext.startActivity(poemIntent);
+                }
+            });
+
+        viewHolder.date.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent poemIntent = new Intent(mContext, PoemActivity.class);
+                    poemIntent.putExtra(VirsUtils.FEED_POEM, poem);
+                    mContext.startActivity(poemIntent);
+                }
+            });
         return convertView;
     }
 }

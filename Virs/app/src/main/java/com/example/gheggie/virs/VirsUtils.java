@@ -8,11 +8,15 @@ import android.widget.TextView;
 class VirsUtils {
 
     static final String NEW_POEM = "virs.heggie.greg.NEW-POEM-INTENT";
+    static final String EDIT_POEM = "virs.heggie.greg.EDIT-POEM-INTENT";
     static final String FEED_POEM = "virs.heggie.greg.FEED-POEM-INTENT";
     static final String USER_POEM = "virs.heggie.greg.USER-POEM-INTENT";
     static final String SNAPPED_POEM = "virs.heggie.greg.SNAPPED-POEM-INTENT";
     static final String USER_CLICKED = "virs.heggie.greg.USER-CLICKED-INTENT";
     static final String USER_ID = "virs.heggie.greg.USER-ID";
+    static final String EDIT_PROFILE = "virs.heggie.greg.EDIT-PROFILE-INTENT";
+    static final String USER_WITHIN = "virs.heggie.greg.WITHIN-MILES-INTENT";
+    static final String VENUE_CLICK = "virs.heggie.greg.VENUE-CLICK-INTENT";
 
     static Poet currentPoet = new Poet();
 

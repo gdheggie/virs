@@ -54,4 +54,14 @@
     <string name="choose_pic">Choose a profile picture</string>
     <string name="select_profile_photo">Select Profile Photo</string>
     <string name="check">Check</string>
+    <string name="edit_poem">Edit Poem</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="back">Back</string>
+    <string name="search_events">Search Events</string>
+    <string name="ex_20">Ex: 20</string>
+    <string name="within_miles">Within how many miles?</string>
+    <string name="events_near_you">Events Near You</string>
+    <string name="enter_mile_radius_ex_20">Enter Mile Radius (ex. 20)</string>
+    <string name="image_for_venue">image for venue</string>
+    <string name="get_directions">Get Directions</string>
 </resources>

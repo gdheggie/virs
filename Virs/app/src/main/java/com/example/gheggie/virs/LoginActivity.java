@@ -49,15 +49,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         // Set Up UI
         Button signin = (Button)findViewById(R.id.sign_in_button);
         twitterSignIn = (TwitterLoginButton)findViewById(R.id.twitter_button);
+        twitterSignIn.setEnabled(true);
         signin.setOnClickListener(this);
-        twitterSignIn.setOnClickListener(this);
         usernameText = (EditText)findViewById(R.id.username_field);
         passwordText = (EditText)findViewById(R.id.password_field);
         TextView signUpText = (TextView) findViewById(R.id.sign_up_here);
         signUpText.setOnClickListener(this);
         progressDialog = new ProgressDialog(this);
         firebaseAuth = FirebaseAuth.getInstance();
-      //  configTwitterSignIn();
+        configTwitterSignIn();
 
         if(firebaseAuth.getCurrentUser() != null) {
             // Start Poem Feed
@@ -84,12 +84,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if(task.isSuccessful()){
-                                    PhotoFragment photoFrag = PhotoFragment.newInstance();
-                                    getFragmentManager().beginTransaction().replace(
-                                            R.id.login_frame,
-                                            photoFrag,
-                                            PhotoFragment.TAG
-                                    ).commit();
+                                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                    if(user != null) {
+                                        // Start Poem Feed
+                                        finish();
+                                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                    } else {
+                                        finish();
+                                        startActivity(new Intent(LoginActivity.this, EditActivity.class));
+                                    }
                                 } else {
                                     Toast.makeText(LoginActivity.this
                                             , "Twitter sign in unsuccessful"
@@ -139,13 +142,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 userLogin();
             } else if (v.getId() == R.id.sign_up_here) { // send user to register screen
                 RegisterFragment registerFrag = RegisterFragment.newInstance();
-                getFragmentManager().beginTransaction().replace(
+                getSupportFragmentManager().beginTransaction().replace(
                         R.id.login_frame,
                         registerFrag,
                         RegisterFragment.TAG
                 ).commit();
-            } else if (v.getId() == R.id.twitter_button) { // sign user in with twitter
-                // TODO: Sign In With Twitter
             }
         }
     }
@@ -174,7 +175,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
                             } else {
                                 Toast.makeText(LoginActivity.this,
-                                        task.getResult().toString(),
+                                        "Login Unsuccessful",
                                         Toast.LENGTH_SHORT).show();
                             }
                         }

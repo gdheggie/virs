@@ -1,8 +1,8 @@
 package com.example.gheggie.virs;
 
-import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -23,7 +23,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 
-public class RegisterFragment extends Fragment{
+public class RegisterFragment extends android.support.v4.app.Fragment{
 
     public static final String TAG = "RegisterFragment.TAG";
     private FirebaseAuth firebaseAuth;
@@ -115,12 +115,8 @@ public class RegisterFragment extends Fragment{
                             if (task.isSuccessful()) {
                                 //Go To Poem Feed
                                 removeFragment();
-                                PhotoFragment cropFrag = PhotoFragment.newInstance();
-                                getFragmentManager().beginTransaction().replace(
-                                        R.id.login_frame,
-                                        cropFrag,
-                                        PhotoFragment.TAG
-                                ).commit();
+                                getActivity().finish();
+                                startActivity(new Intent(getActivity(), EditActivity.class));
                             } else {
                                 Toast.makeText(getActivity(),
                                         "Registration Unsuccessful. Try Again!",
@@ -135,7 +131,7 @@ public class RegisterFragment extends Fragment{
     }
 
     private void removeFragment(){
-        getActivity().getFragmentManager().beginTransaction().
+        getActivity().getSupportFragmentManager().beginTransaction().
                 remove(this).commit();
     }
 }

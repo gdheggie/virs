@@ -6,8 +6,7 @@
         <item name="colorPrimary">@color/blackColor</item>
         <item name="colorPrimaryDark">@color/whiteColor</item>
         <item name="colorAccent">@color/virsPurple</item>
-        <item name="android:statusBarColor">@color/whiteColor</item>
-        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@color/virsPurple</item>
     </style>
 
     <style name="AppTheme.PurpleButton" parent="Widget.AppCompat.Button">

@@ -1,17 +1,16 @@
 package com.example.gheggie.virs;
 
-import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,34 +25,39 @@ import java.util.Map;
 
 import static com.example.gheggie.virs.VirsUtils.currentPoet;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private EditText search;
-    private Toolbar searchBar;
-    private Toolbar poetBar;
-    private ImageButton liveStream;
-    private ImageButton writePoem;
-    private TextView poetName;
     private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     private DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+    private static final int REQUEST_LOCATION = 0x01101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getCurrentUser();
-        searchBar =(Toolbar)findViewById(R.id.search_toolbar);
-        poetBar = (Toolbar)findViewById(R.id.poet_screen_title);
-        search = (EditText)findViewById(R.id.poem_search);
-        liveStream = (ImageButton)findViewById(R.id.live_stream);
-        writePoem = (ImageButton)findViewById(R.id.write_poem);
-        ImageButton signOut = (ImageButton)findViewById(R.id.sign_out);
-        poetName = (TextView)findViewById(R.id.poet_title);
-        writePoem.setOnClickListener(mainActions);
-        liveStream.setOnClickListener(mainActions);
-        signOut.setOnClickListener(mainActions);
-        setupTabViews();
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Request permissions if we don't have it.
+            ActivityCompat.requestPermissions(this,
+                    new String[] {android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+        } else {
+            getCurrentUser();
+            setupTabViews();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        // if user allows permission for the first time. show feed
+        if(grantResults[0] == 0) {
+            getCurrentUser();
+            setupTabViews();
+        }
     }
 
     private void getCurrentUser(){
@@ -79,22 +83,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private final View.OnClickListener mainActions = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if(v.getId() == R.id.live_stream){
-                // TODO: Go To Live Stream
-            } else if (v.getId() == R.id.write_poem) {
-                // Go To New Poem Screen
-                startActivity(new Intent(MainActivity.this, NewPoemActivity.class));
-            } else if (v.getId() == R.id.sign_out) {
-                //sign user out
-                FirebaseAuth.getInstance().signOut();
-                finish();
-            }
-        }
-    };
-
     private void setupTabViews() {
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
@@ -102,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setTabTextColors(R.color.blackColor, R.color.virsPurple);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        final ViewPagerAdapter adapter = new ViewPagerAdapter
+        ViewPagerAdapter adapter = new ViewPagerAdapter
                 (getSupportFragmentManager(), tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -113,24 +101,12 @@ public class MainActivity extends AppCompatActivity {
                 switch (tab.getPosition()) {
                     case 0:
                         tab.setIcon(R.drawable.bookpurple);
-                        search.setText(null);
-                        search.setHint("Search Poems...");
-                        searchBar.setVisibility(View.VISIBLE);
-                        search.setVisibility(View.VISIBLE);
-                        writePoem.setVisibility(View.VISIBLE);
-                        liveStream.setVisibility(View.VISIBLE);
-                        poetBar.setVisibility(View.GONE);
                         break;
                     case 1:
                         tab.setIcon(R.drawable.calendarpurple);
-                        searchBar.setVisibility(View.GONE);
-                        poetBar.setVisibility(View.GONE);
                         break;
                     case 2:
                         tab.setIcon(R.drawable.profilepurple);
-                        searchBar.setVisibility(View.INVISIBLE);
-                        poetBar.setVisibility(View.VISIBLE);
-                        poetName.setText(currentPoet.getUsername());
                 }
             }
 
@@ -150,8 +126,14 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
             }
         });
+    }
+
+    @Override
+    public void onClick(View v) {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        mAuth.signOut();
+        finish();
     }
 }

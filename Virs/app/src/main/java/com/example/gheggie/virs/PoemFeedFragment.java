@@ -1,6 +1,7 @@
 package com.example.gheggie.virs;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.constraint.ConstraintLayout;
@@ -8,14 +9,17 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
+import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,11 +29,15 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class PoemFeedFragment extends Fragment {
+public class PoemFeedFragment extends Fragment{
 
     private GridView poemGrid;
     private ArrayList<Poem> poems = new ArrayList<>();
     private ProgressBar poemProgress;
+    private ArrayList<Poem> searchedPoems = new ArrayList<>();
+    private EditText search;
+    private CustomAdapter searchAdapter;
+    private ConstraintLayout layout;
 
     @Nullable
     @Override
@@ -45,6 +53,52 @@ public class PoemFeedFragment extends Fragment {
         checkConnection();
         poemProgress = (ProgressBar)getActivity().findViewById(R.id.feed_progress);
         poemProgress.setVisibility(View.VISIBLE);
+        layout = (ConstraintLayout)getActivity().findViewById(R.id.poemFeed_background);
+        Toolbar searchBar = (Toolbar) getActivity().findViewById(R.id.search_toolbar);
+        searchBar.setVisibility(View.VISIBLE);
+        search = (EditText) getActivity().findViewById(R.id.poem_search);
+        ImageButton liveStream = (ImageButton) getActivity().findViewById(R.id.live_stream);
+        ImageButton writePoem = (ImageButton) getActivity().findViewById(R.id.write_poem);
+        writePoem.setOnClickListener(mainActions);
+        liveStream.setOnClickListener(mainActions);
+        search.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    if(!search.getText().toString().equals("")) {
+                        searchPoems(search.getText().toString().toLowerCase());
+                    } else {
+                        checkConnection();
+                        layout.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.feedBackground));
+                    }
+                    if (getActivity().getCurrentFocus() != null) {
+                        InputMethodManager inputManager =
+                                (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        inputManager.hideSoftInputFromWindow(
+                                getActivity().getCurrentFocus().getWindowToken(),
+                                InputMethodManager.HIDE_NOT_ALWAYS);
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    private final View.OnClickListener mainActions = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if(v.getId() == R.id.live_stream){
+                // TODO: Go To Live Stream
+            } else if (v.getId() == R.id.write_poem) {
+                // Go To New Poem Screen
+                startActivity(new Intent(getActivity(), NewPoemActivity.class));
+            }
+        }
+    };
+
+    private void searchPoems(String ss){
+        refreshSearchPoems(ss);
     }
 
     private void grabPoemFeed(){
@@ -79,7 +133,28 @@ public class PoemFeedFragment extends Fragment {
         poemAdapter.notifyDataSetChanged();
     }
 
-    // check connection
+    private void refreshSearchPoems(String s){
+        if(searchedPoems != null) {
+            searchedPoems.clear();
+        }
+        for(Poem p : poems) {
+            if(p.getTitle().toLowerCase().contains(s)) {
+                searchedPoems.add(p);
+            }
+        }
+
+        if(searchedPoems != null) {
+            if(searchedPoems.size() == 0) {
+                layout.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.whiteColor));
+            }
+        }
+
+        searchAdapter = new CustomAdapter(searchedPoems, getActivity(), "Snapped");
+        poemGrid.setAdapter(searchAdapter);
+        searchAdapter.notifyDataSetChanged();
+    }
+
+    // check connection them show feed if connection is on
     private void checkConnection() {
         ConnectivityManager mgr = (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         if (mgr != null) {
@@ -90,9 +165,12 @@ public class PoemFeedFragment extends Fragment {
                     grabPoemFeed();
                 }
             } else { // if there is no active connection
-                Toast.makeText(
-                        getActivity(), "Check connection",
-                        Toast.LENGTH_SHORT).show();
+                if(poems != null) {
+                    refreshPoems();
+                    Toast.makeText(
+                            getActivity(), "Check connection",
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }
