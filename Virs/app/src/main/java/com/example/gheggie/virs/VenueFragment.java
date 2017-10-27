@@ -45,12 +45,6 @@ public class VenueFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         String userLocation = getArguments().getString(VirsUtils.USER_WITHIN);
-
-        if(checkConnection()) {
-            EventAsync eventSync = new EventAsync(getActivity(), venues);
-            eventSync.execute(userLocation);
-        }
-
         ImageButton backToEventSearch = (ImageButton) getActivity().findViewById(R.id.back_event);
         backToEventSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,9 +52,13 @@ public class VenueFragment extends Fragment {
                 removeFragment();
             }
         });
-
         venueListView = (ListView)getActivity().findViewById(R.id.event_list);
         venueListView.setOnItemClickListener(venueClick);
+
+        if(checkConnection()) {
+            EventAsync eventSync = new EventAsync(getActivity(), venues);
+            eventSync.execute(userLocation);
+        }
 
         if(venues != null && checkConnection()) {
             populateEventList(venues);

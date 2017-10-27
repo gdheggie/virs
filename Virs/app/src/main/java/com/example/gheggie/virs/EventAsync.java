@@ -1,5 +1,6 @@
 package com.example.gheggie.virs;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
@@ -19,10 +20,20 @@ public class EventAsync extends AsyncTask<String, String, ArrayList<Venue>> {
 
     private ArrayList<Venue> venueList = new ArrayList<>();
     private Context mContext;
+    private ProgressDialog progress;
 
     EventAsync(Context context , ArrayList<Venue> venues){
         mContext = context;
         venueList = venues;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+
+        progress = new ProgressDialog(mContext);
+        progress.setMessage("Loading Events...");
+        progress.show();
     }
 
     @Override
@@ -62,6 +73,12 @@ public class EventAsync extends AsyncTask<String, String, ArrayList<Venue>> {
         super.onProgressUpdate(values);
 
         venueList.add(new Venue(values[0], values[1], values[2], values[3], values[4]));
+    }
+
+    @Override
+    protected void onPostExecute(ArrayList<Venue> venues) {
+        super.onPostExecute(venues);
+        progress.dismiss();
     }
 
     // getting JSON URL

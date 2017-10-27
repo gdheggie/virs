@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/whiteColor"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -59,7 +58,7 @@
         android:id="@+id/venue_image"
         android:contentDescription="@string/image_for_venue"
         android:layout_width="0dp"
-        android:layout_height="250dp"
+        android:layout_height="275dp"
         android:scaleType="fitXY"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -147,6 +146,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="15sp"
+        android:maxWidth="350dp"
         android:textColor="@color/blackColor"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/line3"

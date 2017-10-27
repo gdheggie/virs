@@ -75,6 +75,7 @@ class VenueAdapter extends BaseAdapter {
         bookAsync.execute(venue.getVenueLogo());
         viewHolder.title.setTextColor(ContextCompat.getColor(mContext, R.color.blackColor));
         viewHolder.title.setText(venue.getVenueName());
+        viewHolder.name.setMaxWidth(600);
         viewHolder.name.setText(venue.getVenueTitle());
 
         return convertView;
