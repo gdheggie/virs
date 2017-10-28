@@ -2,6 +2,11 @@ package com.example.gheggie.virs;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +14,11 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 class PoemFeedAdapter extends BaseAdapter{
@@ -63,7 +73,7 @@ class PoemFeedAdapter extends BaseAdapter{
         }
 
         final Poem poem = mPoems.get(position);
-        viewHolder.poetView.setImageResource(R.color.feedBackground);
+        Picasso.with(mContext).load(poem.getPoetView()).into(viewHolder.poetView);
         viewHolder.poetView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,7 +100,7 @@ class PoemFeedAdapter extends BaseAdapter{
             }
         });
         if(poem.getPoem().length() > 90) {
-            String previewOfPoem = poem.getPoem().substring(0,90);
+            String previewOfPoem = poem.getPoem().substring(0,80);
             viewHolder.poemPreview.setText(previewOfPoem + "...");
         } else {
             viewHolder.poemPreview.setText(poem.getPoem());

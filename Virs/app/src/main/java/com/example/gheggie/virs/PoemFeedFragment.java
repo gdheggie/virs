@@ -115,7 +115,7 @@ public class PoemFeedFragment extends Fragment{
                     poems.add(new Poem(newPoem.get("title").toString(), newPoem.get("poem").toString()
                     , newPoem.get("poet").toString(), newPoem.get("date").toString()
                     , newPoem.get("poemId").toString(), newPoem.get("poetId").toString()
-                            , Integer.valueOf(newPoem.get("snapCount").toString())));
+                     , newPoem.get("poetView").toString(), Integer.valueOf(newPoem.get("snapCount").toString())));
                     refreshPoems();
                 }
             }

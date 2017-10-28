@@ -18,6 +18,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -68,8 +70,7 @@ public class VenueDetailFragment extends Fragment {
             String venueTrueTime = venueStartTime[0] + " @ " + clearTime;
             venueTime.setText("Time : " + venueTrueTime);
             venueWhere.setText(venue.getVenueLocation());
-            VenueLogoAsync venueAsync = new VenueLogoAsync(venueImage);
-            venueAsync.execute(venue.getVenueLogo());
+            Picasso.with(getActivity()).load(venue.getVenueLogo()).into(venueImage);
         }
 
         ImageButton back = (ImageButton)getActivity().findViewById(R.id.back_detail);
@@ -96,49 +97,4 @@ public class VenueDetailFragment extends Fragment {
                 remove(this).commit();
     }
 
-}
-
-class VenueLogoAsync extends AsyncTask<String, Void, Bitmap> {
-
-    private final ImageView imgView;
-
-    VenueLogoAsync(ImageView _imgView) {
-        imgView = _imgView;
-    }
-
-    // grab logo
-    @Override
-    protected Bitmap doInBackground(String... params) {
-        String bookIcon = params[0];
-        return logoImages(bookIcon);
-    }
-
-    // set logos
-    @Override
-    protected void onPostExecute(Bitmap bitmap) {
-        super.onPostExecute(bitmap);
-        imgView.setImageBitmap(bitmap);
-    }
-
-    // getting Images
-    private Bitmap logoImages(String imageURL) {
-        try {
-            // create URL obj
-            URL urlConnection = new URL(imageURL);
-
-            HttpURLConnection connection = (HttpURLConnection) urlConnection.openConnection();
-            connection.connect();
-
-            InputStream iS = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(iS);
-
-            iS.close();
-            connection.disconnect();
-
-            return myBitmap;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }

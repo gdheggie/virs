@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         currentPoet.setUserId(newUser.get("userId").toString());
                         currentPoet.setUsername(newUser.get("username").toString());
                         currentPoet.setPoems((ArrayList<String>) newUser.get("poems"));
+                        currentPoet.setUserIcon(newUser.get("userIcon").toString());
                         currentPoet.setSnappedPoems((ArrayList<String>) newUser.get("snappedPoems"));
                     }
                 }

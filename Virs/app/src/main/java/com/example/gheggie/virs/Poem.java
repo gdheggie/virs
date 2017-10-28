@@ -11,14 +11,16 @@ class Poem implements Serializable {
     private final String poemId;
     private String poetId;
     private int snapCount;
+    private String poetView;
 
-    Poem(String _title, String _poem,String _poet, String _date, String _id, String _poetID, int _snaps) {
+    Poem(String _title, String _poem,String _poet, String _date, String _id, String _poetID, String _poetView, int _snaps) {
         title = _title;
         poem = _poem;
         poet = _poet;
         date = _date;
         poemId = _id;
         poetId = _poetID;
+        poetView = _poetView;
         snapCount = _snaps;
     }
 
@@ -49,6 +51,10 @@ class Poem implements Serializable {
 
     public String getPoetId() {
         return poetId;
+    }
+
+    public String getPoetView() {
+        return poetView;
     }
 
     public void setSnapCount(int snapCount) {

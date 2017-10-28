@@ -2,13 +2,24 @@ package com.example.gheggie.virs;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -67,7 +78,7 @@ class CustomAdapter extends BaseAdapter {
         final Poem poem = (Poem) getItem(position);
         if (type.equals("Snapped")) {
             viewHolder.image.setVisibility(View.VISIBLE);
-            viewHolder.image.setImageResource(R.color.feedBackground);
+            Picasso.with(mContext).load(poem.getPoetView()).into(viewHolder.image);
         } else {
             viewHolder.image.setVisibility(View.GONE);
         }
@@ -117,5 +128,4 @@ class CustomViewHolder {
         title = (TextView)v.findViewById(R.id.event_name);
         date = (TextView)v.findViewById(R.id.event_type);
     }
-
 }

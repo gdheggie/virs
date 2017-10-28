@@ -3,7 +3,12 @@ package com.example.gheggie.virs;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -24,9 +29,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.example.gheggie.virs.VirsUtils.currentPoet;
 
@@ -47,6 +58,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
     private String userId;
     private Toolbar mUserBar;
     private TextView userName;
+    private CircleImageView poetView;
 
     public static UserProfileFragment newInstance(String id) {
 
@@ -78,6 +90,8 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         userSnapped.setOnClickListener(this);
         mUserBar = (Toolbar) getActivity().findViewById(R.id.user_bar);
         userName = (TextView) getActivity().findViewById(R.id.user_name);
+        poetView = (CircleImageView)getActivity().findViewById(R.id.user_profile_image);
+
         ImageButton back = (ImageButton) getActivity().findViewById(R.id.back_2);
         ImageButton editProfile = (ImageButton)getActivity().findViewById(R.id.edit_profile);
         editProfile.setOnClickListener(this);
@@ -96,6 +110,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         } else {
             setUserInfo();
             userName.setText(currentPoet.getUsername());
+            Picasso.with(getActivity()).load(currentPoet.getUserIcon()).into(poetView);
             back.setImageResource(R.drawable.logout);
             back.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -104,10 +119,13 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                 }
             });
             editProfile.setVisibility(View.VISIBLE);
+            if(currentPoet.getPoems() == null) {
+                snapCount.setText("0");
+            }
         }
         poemLine = (ImageView)getActivity().findViewById(R.id.line_view);
         snappedLine = (ImageView)getActivity().findViewById(R.id.line_view_2);
-        snapCount.setText("0");
+
     }
 
     private void alertSignOut() {
@@ -133,6 +151,8 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
 
         if(currentPoet.getSnappedPoems() != null) {
             grabUserSnappedPoems(currentPoet.getSnappedPoems());
+        } else {
+            snapCount.setText("0");
         }
     }
 
@@ -204,6 +224,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                         otherPoet.setUsername(newUser.get("username").toString());
                         otherPoet.setUserId(newUser.get("userId").toString());
                         otherPoet.setPoems((ArrayList<String>) newUser.get("poems"));
+                        otherPoet.setUserIcon(newUser.get("userIcon").toString());
                         otherPoet.setSnappedPoems((ArrayList<String>) newUser.get("snappedPoems"));
                         connectUserClicked(otherPoet);
                     }
@@ -229,6 +250,9 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
             poemCount.setText("0");
             snapCount.setText("0");
         }
+
+        Picasso.with(getActivity()).load(poet.getUserIcon()).into(poetView);
+
         userName.setText(otherPoet.getUsername());
         mUserBar.setVisibility(View.VISIBLE);
     }
@@ -248,6 +272,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                         poems.add(new Poem(newPoem.get("title").toString(), newPoem.get("poem").toString()
                                 , newPoem.get("poet").toString(), newPoem.get("date").toString()
                                 , newPoem.get("poemId").toString(), newPoem.get("poetId").toString()
+                                , newPoem.get("poetView").toString()
                                 , Integer.valueOf(newPoem.get("snapCount").toString())));
                         refreshUserList();
                         totalSnaps(poems);
@@ -277,6 +302,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                         snappedPoems.add(new Poem(newPoem.get("title").toString(), newPoem.get("poem").toString()
                                 , newPoem.get("poet").toString(), newPoem.get("date").toString()
                                 , newPoem.get("poemId").toString(), newPoem.get("poetId").toString()
+                                , newPoem.get("poetView").toString()
                                 , Integer.valueOf(newPoem.get("snapCount").toString())));
                         refreshSnapList();
                     }

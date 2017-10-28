@@ -7,26 +7,19 @@ class Poet implements Serializable {
 
     private String username;
     private String userId;
-    //private final Uri userIcon;
+    private String userIcon;
     private ArrayList<String> poems;
     private ArrayList<String> snappedPoems;
 
     Poet(){}
 
-    Poet(String user, String id, ArrayList<String> _poems, ArrayList<String> _snappedPoems) {
+    Poet(String user, String id, String icon, ArrayList<String> _poems, ArrayList<String> _snappedPoems) {
         username = user;
         userId = id;
+        userIcon = icon;
         poems = _poems;
         snappedPoems = _snappedPoems;
     }
-
-//    Poet(String user, String id, Uri icon, ArrayList<String> _poems, ArrayList<String> _snappedPoems) {
-//        username = user;
-//        userId = id;
-//        userIcon = icon;
-//        poems = _poems;
-//        snappedPoems = _snappedPoems;
-//    }
 
     public String getUsername() {
         return username;
@@ -44,9 +37,13 @@ class Poet implements Serializable {
         this.userId = userId;
     }
 
-    //    public Uri getUserIcon() {
-//        return userIcon;
-//    }
+    public String getUserIcon() {
+        return userIcon;
+    }
+
+    public void setUserIcon(String userIcon) {
+        this.userIcon = userIcon;
+    }
 
     public ArrayList<String> getPoems() {
         return poems;

@@ -89,7 +89,7 @@ public class NewPoemActivity extends AppCompatActivity implements View.OnClickLi
             if(editPoem.getPoetId() != null) {
                 editPoem = new Poem(poemTitleText, poem
                         , currentPoet.getUsername(), oldDate, poemId, currentPoet.getUserId()
-                        , snapCount);
+                        , currentPoet.getUserIcon(), snapCount);
                 // Go To Poem Screen with preview of Edited poem
                 finish();
                 Intent poemIntent = new Intent(NewPoemActivity.this, PoemActivity.class);
@@ -99,7 +99,7 @@ public class NewPoemActivity extends AppCompatActivity implements View.OnClickLi
             } else {
                 editPoem = new Poem(poemTitleText, poem
                         , currentPoet.getUsername(), sdf.format(date), poemID, currentPoet.getUserId()
-                        , 0);
+                        , currentPoet.getUserIcon(), 0);
                 // Go To Poem Screen with preview of poem
                 finish();
                 Intent poemIntent = new Intent(NewPoemActivity.this, PoemActivity.class);
