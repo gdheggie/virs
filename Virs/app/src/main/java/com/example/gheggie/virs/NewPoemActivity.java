@@ -21,6 +21,7 @@ public class NewPoemActivity extends AppCompatActivity implements View.OnClickLi
     private EditText poemTitle;
     private EditText poemText;
     private Poem editPoem;
+    private Poem newPoem;
     private int snapCount;
     private String poemId;
     private String oldDate;
@@ -37,17 +38,16 @@ public class NewPoemActivity extends AppCompatActivity implements View.OnClickLi
         poemTitle = (EditText)findViewById(R.id.title_field);
         poemText = (EditText)findViewById(R.id.poem_field);
 
-        if(editIntent.hasExtra(VirsUtils.NEW_POEM)){
-            editPoem = (Poem) editIntent.getSerializableExtra(VirsUtils.NEW_POEM);
-            poemTitle.setText(editPoem.getTitle());
-            poemText.setText(editPoem.getPoem());
-        } else if (editIntent.hasExtra(VirsUtils.EDIT_POEM)) {
+        if (editIntent.hasExtra(VirsUtils.EDIT_POEM)) {
             editPoem = (Poem) editIntent.getSerializableExtra(VirsUtils.EDIT_POEM);
             poemTitle.setText(editPoem.getTitle());
             poemText.setText(editPoem.getPoem());
             snapCount = editPoem.getSnapCount();
             poemId = editPoem.getPoemId();
             oldDate = editPoem.getDate();
+
+            poemTitle.setText(editPoem.getTitle());
+            poemText.setText(editPoem.getPoem());
         }
     }
 
@@ -86,24 +86,23 @@ public class NewPoemActivity extends AppCompatActivity implements View.OnClickLi
             SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
             Date date = new Date();
             String poemID = poemTitleText.trim() + savedFormat.format(date);
-            if(editPoem.getPoetId() != null) {
+            if(editPoem != null) {
                 editPoem = new Poem(poemTitleText, poem
                         , currentPoet.getUsername(), oldDate, poemId, currentPoet.getUserId()
                         , currentPoet.getUserIcon(), snapCount);
                 // Go To Poem Screen with preview of Edited poem
-                finish();
                 Intent poemIntent = new Intent(NewPoemActivity.this, PoemActivity.class);
                 poemIntent.putExtra(VirsUtils.EDIT_POEM, editPoem);
-                setResult(0,poemIntent);
-                finish();
+                startActivity(poemIntent);
+
             } else {
-                editPoem = new Poem(poemTitleText, poem
+                newPoem = new Poem(poemTitleText, poem
                         , currentPoet.getUsername(), sdf.format(date), poemID, currentPoet.getUserId()
                         , currentPoet.getUserIcon(), 0);
                 // Go To Poem Screen with preview of poem
                 finish();
                 Intent poemIntent = new Intent(NewPoemActivity.this, PoemActivity.class);
-                poemIntent.putExtra(VirsUtils.NEW_POEM, editPoem);
+                poemIntent.putExtra(VirsUtils.NEW_POEM, newPoem);
                 startActivity(poemIntent);
             }
         }

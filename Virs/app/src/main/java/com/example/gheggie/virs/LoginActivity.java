@@ -17,6 +17,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -61,6 +63,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         if(firebaseAuth.getCurrentUser() != null) {
             // Start Poem Feed
+            finish();
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
         }
     }
@@ -73,34 +76,29 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 .build();
         Twitter.initialize(config);
 
+        Twitter.getInstance();
+
         twitterSignIn.setCallback(new Callback<TwitterSession>() {
             @Override
             public void success(Result<TwitterSession> result) {
                 AuthCredential credential = TwitterAuthProvider.getCredential(
                         result.data.getAuthToken().token,
                         result.data.getAuthToken().secret);
-                firebaseAuth.signInWithCredential(credential)
-                        .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if(task.isSuccessful()){
-                                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                                    if(user != null) {
-                                        // Start Poem Feed
-                                        finish();
-                                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                                    } else {
-                                        finish();
-                                        startActivity(new Intent(LoginActivity.this, EditActivity.class));
-                                    }
-                                } else {
-                                    Toast.makeText(LoginActivity.this
-                                            , "Twitter sign in unsuccessful"
-                                            , Toast.LENGTH_SHORT
-                                    ).show();
-                                }
-                            }
-                        });
+                firebaseAuth.signInWithCredential(credential).addOnSuccessListener(LoginActivity.this, new OnSuccessListener<AuthResult>() {
+                    @Override
+                    public void onSuccess(AuthResult authResult) {
+                        finish();
+                        startActivity(new Intent(LoginActivity.this, EditActivity.class));
+                    }
+                }).addOnFailureListener(LoginActivity.this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(LoginActivity.this
+                                , e.getMessage()
+                                , Toast.LENGTH_SHORT
+                        ).show();
+                    }
+                });
             }
 
             @Override

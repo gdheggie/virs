@@ -13,8 +13,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
-import android.util.Log;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -34,6 +35,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,8 +43,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-
-import static com.example.gheggie.virs.VirsUtils.currentPoet;
 
 @SuppressWarnings("VisibleForTests")
 public class EditActivity extends AppCompatActivity implements View.OnClickListener {
@@ -59,6 +59,8 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
     private Intent editIntent;
     private StorageReference mStorageRef;
     private String profilePicture;
+    private ProgressDialog progressDialog;
+    private Poet poet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,8 +76,10 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         mUsername = (TextView)findViewById(R.id.username_field2);
         selectButton.setOnClickListener(this);
         finishButton.setOnClickListener(this);
-        finishButton.setText(R.string.check);
+        finishButton.setVisibility(View.INVISIBLE);
         editIntent = getIntent();
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Uploading Photo...");
 
         if(user.getDisplayName() != null) {
             mUsername.setText(user.getDisplayName());
@@ -83,8 +87,11 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         if(editIntent.hasExtra(VirsUtils.EDIT_PROFILE)) {
-            Poet poet = (Poet)editIntent.getSerializableExtra(VirsUtils.EDIT_PROFILE);
+            poet = (Poet)editIntent.getSerializableExtra(VirsUtils.EDIT_PROFILE);
             mUsername.setText(poet.getUsername());
+            if(!poet.getUserIcon().equals("")) {
+                Picasso.with(this).load(poet.getUserIcon()).into(crop_view);
+            }
             back.setVisibility(View.VISIBLE);
             back.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -93,17 +100,39 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
                 }
             });
         }
+
+        mUsername.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                grabUsernames();
+            }
+        });
+
+        mUsername.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                grabUsernames();
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                grabUsernames();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                grabUsernames();
+            }
+        });
     }
 
     private void saveUser() {
-        username = mUsername.getText().toString().trim();
-        savePhoto();
-        // save user to database & local storage
+        // save user to database
         if (user != null) {
             if (TextUtils.isEmpty(username)) {
                 mUsername.setError("Choose a username");
-            } else if(finishButton.getText().equals("Finish")){
-                if(currentPoet == null) {
+            } else{
+                if(poet == null) {
                     ArrayList<String> poems = new ArrayList<>();
                     ArrayList<String> snappedPoems = new ArrayList<>();
                     Poet newPoet = new Poet(username.toLowerCase(), user.getUid(), profilePicture, poems, snappedPoems);
@@ -111,11 +140,11 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
                     finish();
                     startActivity(new Intent(EditActivity.this, MainActivity.class));
                 }else {
-                    currentPoet.setUsername(username);
-                    currentPoet.setUserIcon(profilePicture);
-                    database.child("Users").child(currentPoet.getUserId()).removeValue();
-                    database.child("Users").child(currentPoet.getUserId()).setValue(currentPoet);
-                    editIntent.putExtra(VirsUtils.EDIT_PROFILE, currentPoet);
+                    poet.setUsername(username);
+                    poet.setUserIcon(profilePicture);
+                    database.child("Users").child(poet.getUserId()).removeValue();
+                    database.child("Users").child(poet.getUserId()).setValue(poet);
+                    editIntent.putExtra(VirsUtils.EDIT_PROFILE, poet);
                     finish();
                 }
             }
@@ -132,7 +161,8 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
                     Map newUser = (Map)users.getValue();
                     usernames.add(newUser.get("username").toString());
                 }
-                checkUsername(usernames);
+                username = mUsername.getText().toString().trim();
+                checkUsername(usernames, username);
             }
 
             @Override
@@ -142,22 +172,21 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    private void checkUsername(ArrayList<String> names){
-
-        if (currentPoet != null) {
-            if (currentPoet.getUsername().equals(username)) {
+    private void checkUsername(ArrayList<String> names, String s){
+        if (poet != null) {
+            if (poet.getUsername().equals(s)) {
                 Drawable myIcon = getResources().getDrawable(android.R.drawable.checkbox_on_background, null);
                 myIcon.setBounds(0, 0, myIcon.getIntrinsicWidth(), myIcon.getIntrinsicHeight());
                 mUsername.setError("Available", myIcon);
-                finishButton.setText(R.string.finish);
+                finishButton.setVisibility(View.VISIBLE);
             }
-        } else if(names.contains(username)) {
+        } else if(names.contains(s)) {
             mUsername.setError("Username already exists");
         } else {
             Drawable myIcon = getResources().getDrawable(android.R.drawable.checkbox_on_background, null);
             myIcon.setBounds(0, 0, myIcon.getIntrinsicWidth(), myIcon.getIntrinsicHeight());
             mUsername.setError("Available", myIcon);
-            finishButton.setText(R.string.finish);
+            finishButton.setVisibility(View.VISIBLE);
         }
     }
 
@@ -168,15 +197,12 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
             selectPicture();
         } else if (v.getId() == R.id.check_finish) {
             grabUsernames();
-        } else if (finishButton.getText() == "Finish") {
-            saveUser();
+            savePhoto();
         }
     }
 
     private void savePhoto() {
         if(mCropImageUri != null) {
-            final ProgressDialog progressDialog = new ProgressDialog(this);
-            progressDialog.setTitle("Uploading Photo...");
             progressDialog.show();
 
             StorageReference ref = mStorageRef.child("images/" + UUID.randomUUID().toString());
@@ -189,6 +215,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
                             if(taskSnapshot != null) {
                                 profilePicture = String.valueOf(taskSnapshot.getDownloadUrl());
                             }
+                            saveUser();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -206,6 +233,9 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     });
 
+        }
+        else {
+            profilePicture = "";
         }
     }
 
@@ -229,6 +259,12 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
             startActivityForResult(pickPhoto , 1);
 
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        progressDialog.cancel();
     }
 
     @Override

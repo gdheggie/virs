@@ -110,7 +110,9 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         } else {
             setUserInfo();
             userName.setText(currentPoet.getUsername());
-            Picasso.with(getActivity()).load(currentPoet.getUserIcon()).into(poetView);
+            if(!currentPoet.getUserIcon().equals("")) {
+                Picasso.with(getActivity()).load(currentPoet.getUserIcon()).into(poetView);
+            }
             back.setImageResource(R.drawable.logout);
             back.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -130,7 +132,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
 
     private void alertSignOut() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Sign Out");
+        builder.setTitle("Sign Out?");
         builder.setNegativeButton("NO", null);
         builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
             @Override
@@ -251,7 +253,9 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
             snapCount.setText("0");
         }
 
-        Picasso.with(getActivity()).load(poet.getUserIcon()).into(poetView);
+        if(!currentPoet.getUserIcon().equals("")) {
+            Picasso.with(getActivity()).load(poet.getUserIcon()).into(poetView);
+        }
 
         userName.setText(otherPoet.getUsername());
         mUserBar.setVisibility(View.VISIBLE);

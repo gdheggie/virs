@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -73,8 +74,10 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
         upload.setOnClickListener(this);
         if (poemIntent.hasExtra(VirsUtils.NEW_POEM)) {
             upload.setVisibility(View.VISIBLE);
+            deletePoemButton.setVisibility(View.GONE);
         } else {
             upload.setVisibility(View.GONE);
+            deletePoemButton.setVisibility(View.VISIBLE);
         }
         showPoem();
 
@@ -82,7 +85,6 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
             snap.setClickable(false);
             snapCount.setClickable(false);
         }
-
         setUpSnapCount();
     }
 
@@ -119,17 +121,18 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
     private void setupToolBar() {
         Toolbar poemBar = (Toolbar) findViewById(R.id.poem_bar);
         setSupportActionBar(poemBar);
-        ImageButton back = (ImageButton)findViewById(R.id.back_poem);
+        ImageButton back = (ImageButton) findViewById(R.id.back_poem);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
                 if(poemIntent.hasExtra(VirsUtils.NEW_POEM)) {
+                    finish();
                     Intent editIntent = new Intent(PoemActivity.this, NewPoemActivity.class);
-                    editIntent.putExtra(VirsUtils.NEW_POEM, newPoem);
+                    editIntent.putExtra(VirsUtils.EDIT_POEM, newPoem);
                     startActivity(editIntent);
+                } else {
+                    finish();
                 }
-
             }
         });
         deletePoemButton = (ImageButton)findViewById(R.id.delete_poem_2);
@@ -156,7 +159,7 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
         } else if(upload.getText().equals("Edit Poem")){
             Intent editIntent = new Intent(PoemActivity.this, NewPoemActivity.class);
             editIntent.putExtra(VirsUtils.EDIT_POEM, newPoem);
-            startActivityForResult(editIntent, 0);
+            startActivity(editIntent);
         }
     }
 
@@ -203,14 +206,17 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
 
         // show delete icon & Edit for user owned poems
         if(currentPoet.getUserId().equals(poem.getPoetId())) {
-            deletePoemButton.setVisibility(View.VISIBLE);
-            upload.setVisibility(View.VISIBLE);
-            upload.setText(R.string.edit_poem);
+            if(!poemIntent.hasExtra(VirsUtils.NEW_POEM)) {
+                upload.setVisibility(View.VISIBLE);
+                upload.setText(R.string.edit_poem);
+            }
         } else {
             deletePoemButton.setVisibility(View.GONE);
         }
 
-        Picasso.with(this).load(poem.getPoetView()).into(userImage);
+        if(!poem.getPoetView().equals("")) {
+            Picasso.with(this).load(poem.getPoetView()).into(userImage);
+        }
 
     }
 
@@ -270,7 +276,8 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void shareToTwitter(){
-        // TODO: Share to Twitter
+        // Share to Twitter
+        Toast.makeText(this, "Feature Coming Soon", Toast.LENGTH_SHORT).show();
     }
 
     // add poem to snapped list

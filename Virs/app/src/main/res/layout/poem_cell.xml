@@ -13,7 +13,7 @@
         android:layout_height="48dp"
         app:civ_border_width="0.5dp"
         app:civ_border_color="@color/virsPurple"
-        android:src="@drawable/virsicon"
+        android:src="@color/feedBackground"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="8dp"
         app:layout_constraintLeft_toLeftOf="parent"

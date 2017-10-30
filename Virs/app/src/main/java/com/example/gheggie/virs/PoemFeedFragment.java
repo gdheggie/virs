@@ -36,7 +36,6 @@ public class PoemFeedFragment extends Fragment{
     private ProgressBar poemProgress;
     private ArrayList<Poem> searchedPoems = new ArrayList<>();
     private EditText search;
-    private CustomAdapter searchAdapter;
     private ConstraintLayout layout;
 
     @Nullable
@@ -89,7 +88,8 @@ public class PoemFeedFragment extends Fragment{
         @Override
         public void onClick(View v) {
             if(v.getId() == R.id.live_stream){
-                // TODO: Go To Live Stream
+                // Go To Live Stream
+                Toast.makeText(getActivity(), "Feature Coming Soon!", Toast.LENGTH_SHORT).show();
             } else if (v.getId() == R.id.write_poem) {
                 // Go To New Poem Screen
                 startActivity(new Intent(getActivity(), NewPoemActivity.class));
@@ -149,7 +149,7 @@ public class PoemFeedFragment extends Fragment{
             }
         }
 
-        searchAdapter = new CustomAdapter(searchedPoems, getActivity(), "Snapped");
+        CustomAdapter searchAdapter = new CustomAdapter(searchedPoems, getActivity(), "Snapped");
         poemGrid.setAdapter(searchAdapter);
         searchAdapter.notifyDataSetChanged();
     }
