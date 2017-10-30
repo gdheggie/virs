@@ -99,6 +99,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
                     finish();
                 }
             });
+            profilePicture = poet.getUserIcon();
         }
 
         mUsername.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -141,7 +142,6 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
                     startActivity(new Intent(EditActivity.this, MainActivity.class));
                 }else {
                     poet.setUsername(username);
-                    poet.setUserIcon(profilePicture);
                     database.child("Users").child(poet.getUserId()).removeValue();
                     database.child("Users").child(poet.getUserId()).setValue(poet);
                     editIntent.putExtra(VirsUtils.EDIT_PROFILE, poet);
@@ -215,7 +215,6 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
                             if(taskSnapshot != null) {
                                 profilePicture = String.valueOf(taskSnapshot.getDownloadUrl());
                             }
-                            saveUser();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -233,10 +232,14 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     });
 
+        } else if (profilePicture != null) {
+            poet.setUserIcon(profilePicture);
         }
         else {
             profilePicture = "";
         }
+
+        saveUser();
     }
 
     public void selectPicture() {

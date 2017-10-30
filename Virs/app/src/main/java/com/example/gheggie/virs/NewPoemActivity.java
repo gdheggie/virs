@@ -21,7 +21,6 @@ public class NewPoemActivity extends AppCompatActivity implements View.OnClickLi
     private EditText poemTitle;
     private EditText poemText;
     private Poem editPoem;
-    private Poem newPoem;
     private int snapCount;
     private String poemId;
     private String oldDate;
@@ -40,6 +39,16 @@ public class NewPoemActivity extends AppCompatActivity implements View.OnClickLi
 
         if (editIntent.hasExtra(VirsUtils.EDIT_POEM)) {
             editPoem = (Poem) editIntent.getSerializableExtra(VirsUtils.EDIT_POEM);
+            poemTitle.setText(editPoem.getTitle());
+            poemText.setText(editPoem.getPoem());
+            snapCount = editPoem.getSnapCount();
+            poemId = editPoem.getPoemId();
+            oldDate = editPoem.getDate();
+
+            poemTitle.setText(editPoem.getTitle());
+            poemText.setText(editPoem.getPoem());
+        } else if (editIntent.hasExtra(VirsUtils.NEW_POEM)) {
+            editPoem = (Poem) editIntent.getSerializableExtra(VirsUtils.NEW_POEM);
             poemTitle.setText(editPoem.getTitle());
             poemText.setText(editPoem.getPoem());
             snapCount = editPoem.getSnapCount();
@@ -94,9 +103,8 @@ public class NewPoemActivity extends AppCompatActivity implements View.OnClickLi
                 Intent poemIntent = new Intent(NewPoemActivity.this, PoemActivity.class);
                 poemIntent.putExtra(VirsUtils.EDIT_POEM, editPoem);
                 startActivity(poemIntent);
-
             } else {
-                newPoem = new Poem(poemTitleText, poem
+                Poem newPoem = new Poem(poemTitleText, poem
                         , currentPoet.getUsername(), sdf.format(date), poemID, currentPoet.getUserId()
                         , currentPoet.getUserIcon(), 0);
                 // Go To Poem Screen with preview of poem

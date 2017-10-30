@@ -75,6 +75,11 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
         if (poemIntent.hasExtra(VirsUtils.NEW_POEM)) {
             upload.setVisibility(View.VISIBLE);
             deletePoemButton.setVisibility(View.GONE);
+            upload.setText("Upload Poem");
+        }else if(poemIntent.hasExtra(VirsUtils.EDIT_POEM)) {
+            upload.setVisibility(View.VISIBLE);
+            deletePoemButton.setVisibility(View.GONE);
+            upload.setText("Upload Poem");
         } else {
             upload.setVisibility(View.GONE);
             deletePoemButton.setVisibility(View.VISIBLE);
@@ -86,23 +91,6 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
             snapCount.setClickable(false);
         }
         setUpSnapCount();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        poemIntent = data;
-        showPoem();
-        upload.setVisibility(View.VISIBLE);
-        upload.setText("Finish");
-        upload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                uploadPoem(newPoem);
-                finish();
-            }
-        });
     }
 
     private void setUpSnapCount(){
@@ -128,7 +116,7 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
                 if(poemIntent.hasExtra(VirsUtils.NEW_POEM)) {
                     finish();
                     Intent editIntent = new Intent(PoemActivity.this, NewPoemActivity.class);
-                    editIntent.putExtra(VirsUtils.EDIT_POEM, newPoem);
+                    editIntent.putExtra(VirsUtils.NEW_POEM, newPoem);
                     startActivity(editIntent);
                 } else {
                     finish();
@@ -153,7 +141,7 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
         } else if (v.getId() == R.id.poem_share || v.getId() == R.id.share_label) {
             VirsUtils.shareChange(this, sharePoem, shareLabel);
             shareToTwitter();
-        } else if (v.getId() == R.id.upload_poem && upload.getText().equals("Upload Poem")) {
+        } else if (upload.getText().equals("Upload Poem")) {
             uploadPoem(newPoem);
             finish();
         } else if(upload.getText().equals("Edit Poem")){
@@ -206,12 +194,10 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
 
         // show delete icon & Edit for user owned poems
         if(currentPoet.getUserId().equals(poem.getPoetId())) {
-            if(!poemIntent.hasExtra(VirsUtils.NEW_POEM)) {
+            if(!poemIntent.hasExtra(VirsUtils.NEW_POEM) && !poemIntent.hasExtra(VirsUtils.EDIT_POEM)) {
                 upload.setVisibility(View.VISIBLE);
                 upload.setText(R.string.edit_poem);
             }
-        } else {
-            deletePoemButton.setVisibility(View.GONE);
         }
 
         if(!poem.getPoetView().equals("")) {
