@@ -89,7 +89,7 @@ public class PoemFeedFragment extends Fragment{
         public void onClick(View v) {
             if(v.getId() == R.id.live_stream){
                 // Go To Live Stream
-                Toast.makeText(getActivity(), "Feature Coming Soon!", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(getActivity(), StreamActivity.class));
             } else if (v.getId() == R.id.write_poem) {
                 // Go To New Poem Screen
                 startActivity(new Intent(getActivity(), NewPoemActivity.class));
