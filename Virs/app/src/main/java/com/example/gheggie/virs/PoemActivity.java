@@ -263,7 +263,7 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
 
     private void shareToTwitter(){
         // Share to Twitter
-        Toast.makeText(this, "Feature Coming Soon", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Feature Coming Soon!", Toast.LENGTH_SHORT).show();
     }
 
     // add poem to snapped list
