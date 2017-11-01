@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.gheggie.virs.NewPoemActivity">
+    tools:context="com.example.gheggie.virsux.NewPoemActivity">
 
     <android.support.v7.widget.Toolbar
         app:layout_constraintTop_toTopOf="parent"

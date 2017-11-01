@@ -1,4 +1,4 @@
-package com.example.gheggie.virs;
+package com.example.gheggie.virsux;
 
 import org.junit.Test;
 

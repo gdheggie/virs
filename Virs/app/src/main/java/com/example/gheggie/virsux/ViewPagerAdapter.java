@@ -1,4 +1,4 @@
-package com.example.gheggie.virs;
+package com.example.gheggie.virsux;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/main_layout"
-    tools:context="com.example.gheggie.virs.MainActivity">
+    tools:context="com.example.gheggie.virsux.MainActivity">
 
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"

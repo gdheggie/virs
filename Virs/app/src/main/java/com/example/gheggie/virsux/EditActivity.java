@@ -1,4 +1,4 @@
-package com.example.gheggie.virs;
+package com.example.gheggie.virsux;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -142,6 +142,10 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
                     startActivity(new Intent(EditActivity.this, MainActivity.class));
                 }else {
                     poet.setUsername(username);
+                    if(profilePicture == null || !profilePicture.equals(poet.getUserIcon())) {
+                        profilePicture = "";
+                        poet.setUserIcon(profilePicture);
+                    }
                     database.child("Users").child(poet.getUserId()).removeValue();
                     database.child("Users").child(poet.getUserId()).setValue(poet);
                     editIntent.putExtra(VirsUtils.EDIT_PROFILE, poet);
@@ -197,7 +201,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
             selectPicture();
         } else if (v.getId() == R.id.check_finish) {
             grabUsernames();
-            savePhoto();
+            saveUser();
         }
     }
 
@@ -232,14 +236,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     });
 
-        } else if (profilePicture != null) {
-            poet.setUserIcon(profilePicture);
         }
-        else {
-            profilePicture = "";
-        }
-
-        saveUser();
     }
 
     public void selectPicture() {
@@ -294,6 +291,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
                 opts.inSampleSize = 4;
                 Bitmap bmp = MediaStore.Images.Media.getBitmap(getContentResolver(), mCropImageUri);
                 crop_view.setImageBitmap(bmp);
+                savePhoto();
             } catch (IOException e) {
                 e.printStackTrace();
             }

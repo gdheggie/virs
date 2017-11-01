@@ -1,4 +1,4 @@
-package com.example.gheggie.virs;
+package com.example.gheggie.virsux;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -10,8 +10,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wowza.gocoder.sdk.api.WowzaGoCoder;
@@ -27,20 +30,12 @@ import com.wowza.gocoder.sdk.api.status.WZState;
 import com.wowza.gocoder.sdk.api.status.WZStatus;
 import com.wowza.gocoder.sdk.api.status.WZStatusCallback;
 
-import static com.example.gheggie.virs.VirsUtils.currentPoet;
+import static com.example.gheggie.virsux.VirsUtils.currentPoet;
 
 public class StreamActivity extends AppCompatActivity implements WZStatusCallback, View.OnClickListener{
 
-    private final String LICENSE_API_KEY = "GOSK-5B44-0103-99B1-5193-2922";
-
-    // The top level GoCoder API interface
-    private WowzaGoCoder goCoder;
-
     // The GoCoder SDK camera view
     private WZCameraView goCoderCameraView;
-
-    // The GoCoder SDK audio device
-    private WZAudioDevice goCoderAudioDevice;
 
     private WZCamera activeCamera;
 
@@ -55,6 +50,8 @@ public class StreamActivity extends AppCompatActivity implements WZStatusCallbac
 
     private boolean mPermissionsGranted = true;
 
+    private Button broadcastButton;
+
     private String[] mRequiredPermissions = new String[] {
             android.Manifest.permission.CAMERA,
             Manifest.permission.RECORD_AUDIO
@@ -62,13 +59,15 @@ public class StreamActivity extends AppCompatActivity implements WZStatusCallbac
 
     protected GestureDetectorCompat mAutoFocusDetector = null;
 
+    private TextView liveText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stream);
 
         // Initialize the GoCoder SDK
-        goCoder = WowzaGoCoder.init(getApplicationContext(), LICENSE_API_KEY);
+        WowzaGoCoder goCoder = WowzaGoCoder.init(getApplicationContext(), "GOSK-5B44-0103-99B1-5193-2922");
 
         if (goCoder == null) {
             // If initialization failed, retrieve the last error and display it
@@ -85,7 +84,7 @@ public class StreamActivity extends AppCompatActivity implements WZStatusCallbac
         goCoderCameraView = (WZCameraView) findViewById(R.id.stream_view);
 
         // Create an audio device instance for capturing and broadcasting audio
-        goCoderAudioDevice = new WZAudioDevice();
+        WZAudioDevice goCoderAudioDevice = new WZAudioDevice();
 
         // Create a configuration instance for the broadcaster
         goCoderBroadcastConfig = new WZBroadcastConfig(WZMediaConfig.FRAME_SIZE_1920x1080);
@@ -93,7 +92,7 @@ public class StreamActivity extends AppCompatActivity implements WZStatusCallbac
         // Set the connection properties for the target Wowza Streaming Engine server or Wowza Cloud account
         goCoderBroadcastConfig.setHostAddress("192.168.0.188");
         goCoderBroadcastConfig.setPortNumber(1935);
-        goCoderBroadcastConfig.setApplicationName("live");
+        goCoderBroadcastConfig.setApplicationName("Virs");
         goCoderBroadcastConfig.setStreamName(currentPoet.getUsername());
         goCoderBroadcastConfig.setUsername("heggie");
         goCoderBroadcastConfig.setPassword("Grandma92");
@@ -104,19 +103,24 @@ public class StreamActivity extends AppCompatActivity implements WZStatusCallbac
         // Designate the audio device as the audio broadcaster
         goCoderBroadcastConfig.setAudioBroadcaster(goCoderAudioDevice);
 
-        Button broadcastButton = (Button) findViewById(R.id.broadcast_button);
+        broadcastButton = (Button) findViewById(R.id.broadcast_button);
         broadcastButton.setOnClickListener(this);
 
         if (goCoderCameraView != null) {
             activeCamera = goCoderCameraView.getCamera();
-            if (activeCamera != null && activeCamera.hasCapability(WZCamera.FOCUS_MODE_CONTINUOUS)) {
-                if (activeCamera.getFocusMode() != WZCamera.FOCUS_MODE_CONTINUOUS) {
-                    activeCamera.setFocusMode(WZCamera.FOCUS_MODE_CONTINUOUS);
-                } else {
-                    activeCamera.setFocusMode(WZCamera.FOCUS_MODE_OFF);
-                }
-            }
+            activeCamera.setFocusMode(WZCamera.FOCUS_MODE_CONTINUOUS);
         }
+
+        ImageButton switchCam = (ImageButton) findViewById(R.id.switch_view);
+        switchCam.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                activeCamera = goCoderCameraView.switchCamera();
+            }
+        });
+
+        liveText = (TextView)findViewById(R.id.live_text);
+        liveText.setVisibility(View.GONE);
 
     }
 
@@ -161,21 +165,18 @@ public class StreamActivity extends AppCompatActivity implements WZStatusCallbac
                 goCoderCameraView.startPreview();
             }
 
-            if (goCoderCameraView != null) {
-                activeCamera = goCoderCameraView.getCamera();
-                if (activeCamera != null && activeCamera.hasCapability(WZCamera.FOCUS_MODE_CONTINUOUS)) {
-                    if (activeCamera.getFocusMode() != WZCamera.FOCUS_MODE_CONTINUOUS) {
-                        activeCamera.setFocusMode(WZCamera.FOCUS_MODE_CONTINUOUS);
-                    } else {
-                        activeCamera.setFocusMode(WZCamera.FOCUS_MODE_OFF);
-                    }
-                }
+            if (mAutoFocusDetector == null) {
+                mAutoFocusDetector = new GestureDetectorCompat(this, new FocusListener(this, goCoderCameraView));
             }
 
+            if (goCoderCameraView != null) {
+                activeCamera = goCoderCameraView.getCamera();
+                activeCamera.setFocusMode(WZCamera.FOCUS_MODE_CONTINUOUS);
+            }
         }
     }
 
-     // interpret the results of the permissions request
+    // interpret the results of the permissions request
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         mPermissionsGranted = true;
@@ -219,6 +220,7 @@ public class StreamActivity extends AppCompatActivity implements WZStatusCallbac
 
             case WZState.RUNNING:
                 statusMessage.append("Streaming is active");
+
                 break;
 
             case WZState.STOPPING:
@@ -261,7 +263,7 @@ public class StreamActivity extends AppCompatActivity implements WZStatusCallbac
     @Override
     public void onClick(View v) {
         // return if the user hasn't granted the app the necessary permissions
-        if (!mPermissionsGranted) return;
+        if (!mPermissionsGranted) { return; }
 
         // Ensure the minimum set of configuration settings have been specified necessary to
         // initiate a broadcast streaming session
@@ -271,10 +273,24 @@ public class StreamActivity extends AppCompatActivity implements WZStatusCallbac
             Toast.makeText(this, configValidationError.getErrorDescription(), Toast.LENGTH_LONG).show();
         } else if (goCoderBroadcaster.getStatus().isRunning()) {
             // Stop the broadcast that is currently running
+            broadcastButton.setText(R.string.start_stream);
+            liveText.setVisibility(View.GONE);
             goCoderBroadcaster.endBroadcast(this);
         } else {
             // Start streaming
+            broadcastButton.setText(R.string.end);
+            liveText.setVisibility(View.VISIBLE);
             goCoderBroadcaster.startBroadcast(goCoderBroadcastConfig, this);
         }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        if (mAutoFocusDetector != null)
+            mAutoFocusDetector.onTouchEvent(event);
+
+        return super.onTouchEvent(event);
+
     }
 }

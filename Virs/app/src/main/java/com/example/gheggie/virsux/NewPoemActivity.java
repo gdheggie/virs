@@ -1,11 +1,10 @@
-package com.example.gheggie.virs;
+package com.example.gheggie.virsux;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,7 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.example.gheggie.virs.VirsUtils.currentPoet;
+import static com.example.gheggie.virsux.VirsUtils.currentPoet;
 
 public class NewPoemActivity extends AppCompatActivity implements View.OnClickListener {
 

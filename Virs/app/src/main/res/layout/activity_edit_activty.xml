@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/whiteColor"
-    tools:context="com.example.gheggie.virs.EditActivity">
+    tools:context="com.example.gheggie.virsux.EditActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/search_toolbar"
