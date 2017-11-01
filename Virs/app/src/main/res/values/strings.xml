@@ -64,4 +64,8 @@
     <string name="enter_mile_radius_ex_20">Enter Mile Radius (ex. 20)</string>
     <string name="image_for_venue">image for venue</string>
     <string name="get_directions">Get Directions</string>
+    <string name="live">LIVE</string>
+    <string name="switch_camera_view">switch camera view button</string>
+    <string name="start_stream">Start Stream</string>
+    <string name="end">End Stream</string>
 </resources>

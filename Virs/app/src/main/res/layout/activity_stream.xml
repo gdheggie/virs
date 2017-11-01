@@ -18,10 +18,34 @@
         android:theme="@style/AppTheme.PurpleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start Stream"
+        android:text="@string/start_stream"
         android:id="@+id/broadcast_button"
         android:layout_marginBottom="16dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/live_text"
+        android:text="@string/live"
+        android:padding="10dp"
+        android:textColor="@color/whiteColor"
+        android:background="@android:color/holo_red_dark"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp" />
+
+    <ImageButton
+        android:contentDescription="@string/switch_camera_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/camera_mode"
+        android:background="@android:color/transparent"
+        android:id="@+id/switch_view"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>
