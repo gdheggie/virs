@@ -88,13 +88,13 @@ public class StreamActivity extends AppCompatActivity implements WZStatusCallbac
         WZAudioDevice goCoderAudioDevice = new WZAudioDevice();
 
         // Create a configuration instance for the broadcaster
-        goCoderBroadcastConfig = new WZBroadcastConfig(WZMediaConfig.FRAME_SIZE_1920x1080);
+        goCoderBroadcastConfig = new WZBroadcastConfig(WZMediaConfig.FRAME_SIZE_1280x720);
 
         // Set the connection properties for the target Wowza Streaming Engine server or Wowza Cloud account
         goCoderBroadcastConfig.setHostAddress("192.168.0.188");
         goCoderBroadcastConfig.setPortNumber(1935);
-        goCoderBroadcastConfig.setApplicationName("Virs");
-        goCoderBroadcastConfig.setStreamName(currentPoet.getUsername());
+        goCoderBroadcastConfig.setApplicationName("live");
+        goCoderBroadcastConfig.setStreamName("myStream");
         goCoderBroadcastConfig.setUsername("heggie");
         goCoderBroadcastConfig.setPassword("Grandma92");
 

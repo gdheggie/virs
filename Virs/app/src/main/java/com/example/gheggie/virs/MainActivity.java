@@ -1,5 +1,6 @@
 package com.example.gheggie.virs;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -11,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -47,6 +49,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             getCurrentUser();
             setupTabViews();
         }
+
+        Button watch = (Button)findViewById(R.id.watch_stream_button);
+        watch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent watch = new Intent(MainActivity.this, WatchStreamActivity.class);
+                startActivity(watch);
+            }
+        });
     }
 
     @Override

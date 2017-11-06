@@ -19,8 +19,8 @@ android {
     }
 }
 
-repositories{
-    flatDir{
+repositories {
+    flatDir {
         dirs 'libs'
     }
 }
@@ -46,6 +46,7 @@ dependencies {
     compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
     testCompile 'junit:junit:4.12'
 }
+
 
 
 
