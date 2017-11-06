@@ -186,7 +186,9 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                         refreshSnapList();
                     }
                 } else {
+                    currentPoet = (Poet)data.getSerializableExtra(VirsUtils.EDIT_PROFILE);
                     userName.setText(currentPoet.getUsername());
+                    Picasso.with(getActivity()).load(currentPoet.getUserIcon()).into(poetView);
                     if (currentPoet.getPoems() != null) {
                         grabUserPoems(currentPoet.getPoems());
                         poemCount.setText(String.valueOf(currentPoet.getPoems().size()));

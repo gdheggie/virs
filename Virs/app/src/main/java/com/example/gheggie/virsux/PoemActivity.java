@@ -188,6 +188,8 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
                 upload.setVisibility(View.VISIBLE);
                 upload.setText(R.string.edit_poem);
             }
+        } else {
+            deletePoemButton.setVisibility(View.GONE);
         }
 
         if(!poem.getPoetView().equals("")) {

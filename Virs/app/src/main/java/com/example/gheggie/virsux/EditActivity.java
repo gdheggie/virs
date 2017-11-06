@@ -44,6 +44,8 @@ import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.example.gheggie.virsux.VirsUtils.currentPoet;
+
 @SuppressWarnings("VisibleForTests")
 public class EditActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -80,6 +82,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         editIntent = getIntent();
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Uploading Photo...");
+        profilePicture = "";
 
         if(user.getDisplayName() != null) {
             mUsername.setText(user.getDisplayName());
@@ -101,6 +104,8 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
             });
             profilePicture = poet.getUserIcon();
         }
+
+
 
         mUsername.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -142,13 +147,11 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
                     startActivity(new Intent(EditActivity.this, MainActivity.class));
                 }else {
                     poet.setUsername(username);
-                    if(profilePicture == null || !profilePicture.equals(poet.getUserIcon())) {
-                        profilePicture = "";
-                        poet.setUserIcon(profilePicture);
-                    }
+                    poet.setUserIcon(profilePicture);
                     database.child("Users").child(poet.getUserId()).removeValue();
                     database.child("Users").child(poet.getUserId()).setValue(poet);
                     editIntent.putExtra(VirsUtils.EDIT_PROFILE, poet);
+                    setResult(0,editIntent);
                     finish();
                 }
             }
