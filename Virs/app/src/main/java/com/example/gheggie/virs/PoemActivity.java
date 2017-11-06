@@ -198,6 +198,8 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
                 upload.setVisibility(View.VISIBLE);
                 upload.setText(R.string.edit_poem);
             }
+        } else {
+            deletePoemButton.setVisibility(View.GONE);
         }
 
         if(!poem.getPoetView().equals("")) {
@@ -263,7 +265,7 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
 
     private void shareToTwitter(){
         // Share to Twitter
-        Toast.makeText(this, "Feature Coming Soon!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Feature Coming Soon", Toast.LENGTH_SHORT).show();
     }
 
     // add poem to snapped list

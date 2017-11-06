@@ -177,41 +177,43 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == 0) {
-                if (otherPoet.getUserId() != null) {
-                    if (otherPoet.getPoems() != null) {
-                        grabUserPoems(otherPoet.getPoems());
-                        poemCount.setText(String.valueOf(otherPoet.getPoems().size()));
-                    } else {
-                        poems.clear();
-                        refreshUserList();
-                        poemCount.setText("0");
-                        snapCount.setText("0");
-                    }
-                    if (otherPoet.getSnappedPoems() != null) {
-                        grabUserSnappedPoems(otherPoet.getSnappedPoems());
-                    } else {
-                        snappedPoems.clear();
-                        refreshSnapList();
-                    }
+            if (otherPoet.getUserId() != null) {
+                if (otherPoet.getPoems() != null) {
+                    grabUserPoems(otherPoet.getPoems());
+                    poemCount.setText(String.valueOf(otherPoet.getPoems().size()));
                 } else {
-                    userName.setText(currentPoet.getUsername());
-                    if (currentPoet.getPoems() != null) {
-                        grabUserPoems(currentPoet.getPoems());
-                        poemCount.setText(String.valueOf(currentPoet.getPoems().size()));
-                    } else {
-                        poems.clear();
-                        refreshUserList();
-                        poemCount.setText("0");
-                        snapCount.setText("0");
-                    }
-                    if (currentPoet.getSnappedPoems() != null) {
-                        grabUserSnappedPoems(currentPoet.getSnappedPoems());
-                    } else {
-                        snappedPoems.clear();
-                        refreshSnapList();
-                    }
+                    poems.clear();
+                    refreshUserList();
+                    poemCount.setText("0");
+                    snapCount.setText("0");
+                }
+                if (otherPoet.getSnappedPoems() != null) {
+                    grabUserSnappedPoems(otherPoet.getSnappedPoems());
+                } else {
+                    snappedPoems.clear();
+                    refreshSnapList();
+                }
+            } else {
+                currentPoet = (Poet)data.getSerializableExtra(VirsUtils.EDIT_PROFILE);
+                userName.setText(currentPoet.getUsername());
+                Picasso.with(getActivity()).load(currentPoet.getUserIcon()).into(poetView);
+                if (currentPoet.getPoems() != null) {
+                    grabUserPoems(currentPoet.getPoems());
+                    poemCount.setText(String.valueOf(currentPoet.getPoems().size()));
+                } else {
+                    poems.clear();
+                    refreshUserList();
+                    poemCount.setText("0");
+                    snapCount.setText("0");
+                }
+                if (currentPoet.getSnappedPoems() != null) {
+                    grabUserSnappedPoems(currentPoet.getSnappedPoems());
+                } else {
+                    snappedPoems.clear();
+                    refreshSnapList();
                 }
             }
+        }
     }
 
     private void grabUserClicked(){
