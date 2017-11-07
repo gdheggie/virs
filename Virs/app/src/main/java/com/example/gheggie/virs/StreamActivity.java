@@ -30,8 +30,6 @@ import com.wowza.gocoder.sdk.api.status.WZState;
 import com.wowza.gocoder.sdk.api.status.WZStatus;
 import com.wowza.gocoder.sdk.api.status.WZStatusCallback;
 
-import static com.example.gheggie.virs.VirsUtils.currentPoet;
-
 public class StreamActivity extends AppCompatActivity implements WZStatusCallback
         , View.OnClickListener {
 
@@ -61,6 +59,8 @@ public class StreamActivity extends AppCompatActivity implements WZStatusCallbac
     protected GestureDetectorCompat mAutoFocusDetector = null;
 
     private TextView liveText;
+
+    private ImageButton closeButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,9 +120,15 @@ public class StreamActivity extends AppCompatActivity implements WZStatusCallbac
             }
         });
 
+        closeButton = (ImageButton)findViewById(R.id.close_live);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         liveText = (TextView)findViewById(R.id.live_text);
-        liveText.setVisibility(View.GONE);
-
+        hideLive();
     }
 
     // enable full screen mode
@@ -177,6 +183,18 @@ public class StreamActivity extends AppCompatActivity implements WZStatusCallbac
         }
     }
 
+    private void showLive(){
+        broadcastButton.setText(R.string.end);
+        liveText.setVisibility(View.VISIBLE);
+        closeButton.setVisibility(View.GONE);
+    }
+
+    private void hideLive(){
+        broadcastButton.setText(R.string.start_stream);
+        liveText.setVisibility(View.GONE);
+        closeButton.setVisibility(View.VISIBLE);
+    }
+
      // interpret the results of the permissions request
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
@@ -203,7 +221,6 @@ public class StreamActivity extends AppCompatActivity implements WZStatusCallbac
         return true;
     }
 
-
     // The callback invoked upon changes to the state of the steaming broadcast
     @Override
     public void onWZStatus(WZStatus wzStatus) {
@@ -221,7 +238,6 @@ public class StreamActivity extends AppCompatActivity implements WZStatusCallbac
 
             case WZState.RUNNING:
                 statusMessage.append("Streaming is active");
-
                 break;
 
             case WZState.STOPPING:
@@ -245,7 +261,6 @@ public class StreamActivity extends AppCompatActivity implements WZStatusCallbac
         });
     }
 
-
     // The callback invoked when an error occurs during a broadcast
     @Override
     public void onWZError(final WZStatus wzStatus) {
@@ -264,7 +279,7 @@ public class StreamActivity extends AppCompatActivity implements WZStatusCallbac
     @Override
     public void onClick(View v) {
         // return if the user hasn't granted the app the necessary permissions
-        if (!mPermissionsGranted) { return; }
+        if (!mPermissionsGranted) { return;}
 
         // Ensure the minimum set of configuration settings have been specified necessary to
         // initiate a broadcast streaming session
@@ -274,13 +289,10 @@ public class StreamActivity extends AppCompatActivity implements WZStatusCallbac
             Toast.makeText(this, configValidationError.getErrorDescription(), Toast.LENGTH_LONG).show();
         } else if (goCoderBroadcaster.getStatus().isRunning()) {
             // Stop the broadcast that is currently running
-            broadcastButton.setText(R.string.start_stream);
-            liveText.setVisibility(View.GONE);
+            hideLive();
             goCoderBroadcaster.endBroadcast(this);
         } else {
-            // Start streaming
-            broadcastButton.setText(R.string.end);
-            liveText.setVisibility(View.VISIBLE);
+            showLive();
             goCoderBroadcaster.startBroadcast(goCoderBroadcastConfig, this);
         }
     }

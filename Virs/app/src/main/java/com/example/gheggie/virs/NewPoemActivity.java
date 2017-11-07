@@ -100,6 +100,7 @@ public class NewPoemActivity extends AppCompatActivity implements View.OnClickLi
                         , currentPoet.getUsername(), oldDate, poemId, currentPoet.getUserId()
                         , currentPoet.getUserIcon(), snapCount);
                 // Go To Poem Screen with preview of Edited poem
+                finish();
                 Intent poemIntent = new Intent(NewPoemActivity.this, PoemActivity.class);
                 poemIntent.putExtra(VirsUtils.EDIT_POEM, editPoem);
                 startActivity(poemIntent);

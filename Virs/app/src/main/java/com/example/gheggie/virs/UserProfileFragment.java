@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -147,6 +148,11 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         if(currentPoet.getPoems() == null){
             poemCount.setText("0");
         } else {
+            for(int i = 0; i < currentPoet.getPoems().size(); i++) {
+                if(currentPoet.getPoems().get(i) == null) {
+                    currentPoet.getPoems().remove(i);
+                }
+            }
             poemCount.setText(String.valueOf(currentPoet.getPoems().size()));
             grabUserPoems(currentPoet.getPoems());
         }
@@ -194,7 +200,9 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                     refreshSnapList();
                 }
             } else {
-                currentPoet = (Poet)data.getSerializableExtra(VirsUtils.EDIT_PROFILE);
+                if(data != null) {
+                    currentPoet = (Poet)data.getSerializableExtra(VirsUtils.EDIT_PROFILE);
+                }
                 userName.setText(currentPoet.getUsername());
                 Picasso.with(getActivity()).load(currentPoet.getUserIcon()).into(poetView);
                 if (currentPoet.getPoems() != null) {
@@ -248,6 +256,12 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
             grabUserSnappedPoems(otherPoet.getSnappedPoems());
         }
         if(otherPoet.getPoems() != null) {
+            Log.d("WTF", String.valueOf(otherPoet.getPoems()));
+            for(int i = 0; i < otherPoet.getPoems().size(); i++) {
+                if(otherPoet.getPoems().get(i) == null) {
+                    otherPoet.getPoems().remove(i);
+                }
+            }
             grabUserPoems(otherPoet.getPoems());
             poemCount.setText(String.valueOf(otherPoet.getPoems().size()));
         } else {
@@ -255,7 +269,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
             snapCount.setText("0");
         }
 
-        if(!currentPoet.getUserIcon().equals("")) {
+        if(!otherPoet.getUserIcon().equals("")) {
             Picasso.with(getActivity()).load(poet.getUserIcon()).into(poetView);
         }
 
@@ -274,17 +288,17 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
 
                 for(Map.Entry<String, Object> poem : fbPoems.entrySet()) {
                     Map newPoem = (Map)poem.getValue();
-                    if(_list.contains(newPoem.get("poemId").toString())) {
-                        poems.add(new Poem(newPoem.get("title").toString(), newPoem.get("poem").toString()
-                                , newPoem.get("poet").toString(), newPoem.get("date").toString()
-                                , newPoem.get("poemId").toString(), newPoem.get("poetId").toString()
-                                , newPoem.get("poetView").toString()
-                                , Integer.valueOf(newPoem.get("snapCount").toString())));
-                        refreshUserList();
-                        totalSnaps(poems);
+                        if (_list.contains(newPoem.get("poemId").toString())) {
+                            poems.add(new Poem(newPoem.get("title").toString(), newPoem.get("poem").toString()
+                                    , newPoem.get("poet").toString(), newPoem.get("date").toString()
+                                    , newPoem.get("poemId").toString(), newPoem.get("poetId").toString()
+                                    , newPoem.get("poetView").toString()
+                                    , Integer.valueOf(newPoem.get("snapCount").toString())));
+                            refreshUserList();
+                            totalSnaps(poems);
+                        }
                     }
                 }
-            }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {

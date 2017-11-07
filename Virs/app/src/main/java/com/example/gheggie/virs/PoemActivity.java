@@ -145,6 +145,7 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
             uploadPoem(newPoem);
             finish();
         } else if(upload.getText().equals("Edit Poem")){
+            finish();
             Intent editIntent = new Intent(PoemActivity.this, NewPoemActivity.class);
             editIntent.putExtra(VirsUtils.EDIT_POEM, newPoem);
             startActivity(editIntent);
@@ -305,7 +306,9 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
             poems.add(poem.getPoemId());
             currentPoet.setPoems(poems);
         } else {
-            currentPoet.getPoems().add(poem.getPoemId());
+            if(!currentPoet.getPoems().contains(poem.getPoemId())) {
+                currentPoet.getPoems().add(poem.getPoemId());
+            }
         }
 
         database.child("Users").child(currentPoet.getUserId()).removeValue();

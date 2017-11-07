@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.VideoView;
 
 public class WatchStreamActivity extends AppCompatActivity {
@@ -31,6 +32,14 @@ public class WatchStreamActivity extends AppCompatActivity {
             @Override
             public void onPrepared(MediaPlayer mp) {
                 dialog.dismiss();
+            }
+        });
+
+        TextView close = (TextView)findViewById(R.id.close_stream);
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
     }
