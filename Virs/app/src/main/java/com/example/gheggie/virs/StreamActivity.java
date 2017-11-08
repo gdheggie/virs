@@ -17,6 +17,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.wowza.gocoder.sdk.api.WowzaGoCoder;
 import com.wowza.gocoder.sdk.api.broadcast.WZBroadcast;
 import com.wowza.gocoder.sdk.api.broadcast.WZBroadcastConfig;
@@ -29,6 +31,8 @@ import com.wowza.gocoder.sdk.api.errors.WZStreamingError;
 import com.wowza.gocoder.sdk.api.status.WZState;
 import com.wowza.gocoder.sdk.api.status.WZStatus;
 import com.wowza.gocoder.sdk.api.status.WZStatusCallback;
+
+import static com.example.gheggie.virs.VirsUtils.currentPoet;
 
 public class StreamActivity extends AppCompatActivity implements WZStatusCallback
         , View.OnClickListener {
@@ -59,8 +63,11 @@ public class StreamActivity extends AppCompatActivity implements WZStatusCallbac
     protected GestureDetectorCompat mAutoFocusDetector = null;
 
     private TextView liveText;
-
+    private TextView timerText;
     private ImageButton closeButton;
+    private int time = -3;
+    private Thread t;
+    private Stream stream = new Stream();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +105,14 @@ public class StreamActivity extends AppCompatActivity implements WZStatusCallbac
         goCoderBroadcastConfig.setUsername("heggie");
         goCoderBroadcastConfig.setPassword("Grandma92");
 
+        String webAddress = goCoderBroadcastConfig.getHostAddress();
+        String appName = goCoderBroadcastConfig.getApplicationName();
+        String streamName = goCoderBroadcastConfig.getStreamName();
+
+        stream.setUserIcon(currentPoet.getUserIcon());
+        stream.setAddress("rtsp://"+webAddress+":1935/"+appName+"/"+streamName);
+
+
         // Designate the camera preview as the video source
         goCoderBroadcastConfig.setVideoBroadcaster(goCoderCameraView);
 
@@ -106,19 +121,22 @@ public class StreamActivity extends AppCompatActivity implements WZStatusCallbac
 
         broadcastButton = (Button) findViewById(R.id.broadcast_button);
         broadcastButton.setOnClickListener(this);
+        ImageButton switchCam = (ImageButton) findViewById(R.id.switch_view);
 
         if (goCoderCameraView != null) {
             activeCamera = goCoderCameraView.getCamera();
             activeCamera.setFocusMode(WZCamera.FOCUS_MODE_CONTINUOUS);
         }
 
-        ImageButton switchCam = (ImageButton) findViewById(R.id.switch_view);
         switchCam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                activeCamera = goCoderCameraView.switchCamera();
+                if(goCoderCameraView != null) {
+                    activeCamera = goCoderCameraView.switchCamera();
+                }
             }
         });
+        timerText = (TextView)findViewById(R.id.stream_timer);
 
         closeButton = (ImageButton)findViewById(R.id.close_live);
         closeButton.setOnClickListener(new View.OnClickListener() {
@@ -128,7 +146,33 @@ public class StreamActivity extends AppCompatActivity implements WZStatusCallbac
             }
         });
         liveText = (TextView)findViewById(R.id.live_text);
+
         hideLive();
+    }
+
+    private void timerTextValue(){
+        t = new Thread() {
+            @Override
+            public void run() {
+                while(!isInterrupted()) {
+                    try {
+                        Thread.sleep(1000);
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                time++;
+                                timerText.setText(String.valueOf(time));
+                            }
+                        });
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        };
+        t.start();
     }
 
     // enable full screen mode
@@ -187,11 +231,14 @@ public class StreamActivity extends AppCompatActivity implements WZStatusCallbac
         broadcastButton.setText(R.string.end);
         liveText.setVisibility(View.VISIBLE);
         closeButton.setVisibility(View.GONE);
+        timerText.setVisibility(View.VISIBLE);
+        timerTextValue();
     }
 
     private void hideLive(){
         broadcastButton.setText(R.string.start_stream);
         liveText.setVisibility(View.GONE);
+        timerText.setVisibility(View.GONE);
         closeButton.setVisibility(View.VISIBLE);
     }
 
@@ -225,29 +272,18 @@ public class StreamActivity extends AppCompatActivity implements WZStatusCallbac
     @Override
     public void onWZStatus(WZStatus wzStatus) {
         // A successful status transition has been reported by the GoCoder SDK
-        final StringBuffer statusMessage = new StringBuffer("Broadcast status: ");
+        final StringBuffer statusMessage = new StringBuffer("Stream status: ");
 
         switch (wzStatus.getState()) {
             case WZState.STARTING:
                 statusMessage.append("Broadcast initialization");
                 break;
-
-            case WZState.READY:
-                statusMessage.append("Ready to begin streaming");
-                break;
-
             case WZState.RUNNING:
-                statusMessage.append("Streaming is active");
+                statusMessage.append("Stream is active");
                 break;
-
-            case WZState.STOPPING:
-                statusMessage.append("Broadcast shutting down");
-                break;
-
             case WZState.IDLE:
-                statusMessage.append("The broadcast is stopped");
+                statusMessage.append("Stream has stopped");
                 break;
-
             default:
                 return;
         }
@@ -291,9 +327,12 @@ public class StreamActivity extends AppCompatActivity implements WZStatusCallbac
             // Stop the broadcast that is currently running
             hideLive();
             goCoderBroadcaster.endBroadcast(this);
+            t.interrupt();
+            deleteStream();
         } else {
             showLive();
             goCoderBroadcaster.startBroadcast(goCoderBroadcastConfig, this);
+            addStream();
         }
     }
 
@@ -305,5 +344,15 @@ public class StreamActivity extends AppCompatActivity implements WZStatusCallbac
 
         return super.onTouchEvent(event);
 
+    }
+
+    private void addStream(){
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+        database.child("Streams").child(currentPoet.getUserId()).setValue(stream);
+    }
+
+    private void deleteStream(){
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+        database.child("Streams").child(currentPoet.getUserId()).removeValue();
     }
 }

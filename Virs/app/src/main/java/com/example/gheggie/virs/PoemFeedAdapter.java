@@ -2,6 +2,7 @@ package com.example.gheggie.virs;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,13 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Locale;
 
 class PoemFeedAdapter extends BaseAdapter{
 
@@ -49,26 +56,24 @@ class PoemFeedAdapter extends BaseAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder viewHolder;
-
         if(convertView == null) {
-
             convertView = LayoutInflater.from(mContext)
                     .inflate(R.layout.poem_cell,parent,false);
-
-            viewHolder = new ViewHolder(convertView);
-
-            convertView.setTag(viewHolder);
-
-        } else {
-            viewHolder = (ViewHolder)convertView.getTag();
         }
+        sortArray(mPoems);
+
+        ImageView poetView = (ImageView)convertView.findViewById(R.id.poet_image);
+        TextView poetName = (TextView)convertView.findViewById(R.id.poet_name);
+        TextView poemPreview = (TextView)convertView.findViewById(R.id.poem_preview);
+        TextView snapCount = (TextView)convertView.findViewById(R.id.snap_count);
+        ImageView chevron = (ImageView)convertView.findViewById(R.id.chevron_feed);
+        TextView poetDate = (TextView)convertView.findViewById(R.id.time_ago);
 
         final Poem poem = mPoems.get(position);
         if(!poem.getPoetView().equals("")) {
-            Picasso.with(mContext).load(poem.getPoetView()).into(viewHolder.poetView);
+            Picasso.with(mContext).load(poem.getPoetView()).into(poetView);
         }
-        viewHolder.poetView.setOnClickListener(new View.OnClickListener() {
+        poetView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent userIntent = new Intent(mContext, UsersProfileActivity.class);
@@ -76,8 +81,8 @@ class PoemFeedAdapter extends BaseAdapter{
                 mContext.startActivity(userIntent);
             }
         });
-        viewHolder.poetName.setText(poem.getPoet());
-        viewHolder.poetName.setOnClickListener(new View.OnClickListener() {
+        poetName.setText(poem.getPoet());
+        poetName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent userIntent = new Intent(mContext, UsersProfileActivity.class);
@@ -85,7 +90,7 @@ class PoemFeedAdapter extends BaseAdapter{
                 mContext.startActivity(userIntent);
             }
         });
-        viewHolder.chevron.setOnClickListener(new View.OnClickListener() {
+        chevron.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent poemIntent = new Intent(mContext, PoemActivity.class);
@@ -95,11 +100,11 @@ class PoemFeedAdapter extends BaseAdapter{
         });
         if(poem.getPoem().length() > 90) {
             String previewOfPoem = poem.getPoem().substring(0,80);
-            viewHolder.poemPreview.setText(previewOfPoem + "...");
+            poemPreview.setText(previewOfPoem + "...");
         } else {
-            viewHolder.poemPreview.setText(poem.getPoem());
+            poemPreview.setText(poem.getPoem());
         }
-        viewHolder.poemPreview.setOnClickListener(new View.OnClickListener() {
+        poemPreview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent poemIntent = new Intent(mContext, PoemActivity.class);
@@ -109,31 +114,66 @@ class PoemFeedAdapter extends BaseAdapter{
         });
         if (poem.getSnapCount() == 1) {
             String snaps = " " + poem.getSnapCount() + "\n  snap";
-            viewHolder.snapCount.setText(String.valueOf(poem.getSnapCount()));
-            viewHolder.snapCount.setText(snaps);
+            snapCount.setText(String.valueOf(poem.getSnapCount()));
+            snapCount.setText(snaps);
         } else {
             String snaps = poem.getSnapCount() + "\nsnaps";
-            viewHolder.snapCount.setText(snaps);
+            snapCount.setText(snaps);
         }
+
+        poetDate.setText(howLongAgo(poem.getDate()));
 
         return convertView;
     }
 
-}
-
-class ViewHolder{
-    ImageView poetView;
-    TextView poetName;
-    TextView poemPreview;
-    TextView snapCount;
-    ImageView chevron;
-
-    ViewHolder(View v) {
-        poetView = (ImageView)v.findViewById(R.id.poet_image);
-        poetName = (TextView)v.findViewById(R.id.poet_name);
-        poemPreview = (TextView)v.findViewById(R.id.poem_preview);
-        snapCount = (TextView)v.findViewById(R.id.snap_count);
-        chevron = (ImageView)v.findViewById(R.id.chevron_feed);
+    private void sortArray(ArrayList<Poem> _mPoems){
+        Collections.sort(_mPoems, new Comparator<Poem>() {
+            @Override
+            public int compare(Poem o1, Poem o2) {
+                return o2.getDate().compareTo(o1.getDate());
+            }
+        });
     }
 
+    private String howLongAgo(String date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy-hh:mm:ss", Locale.US);
+        Date poemTime = new Date();
+        Date nowTime = new Date();
+        String agoTime = "huh";
+        try {
+            poemTime = sdf.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        long timePast = nowTime.getTime() - poemTime.getTime();
+
+        long seconds = 1000;
+        long minutes = seconds * 60;
+        long hours = minutes * 60;
+        long days = hours * 24;
+
+        long dayCount = timePast / days;
+        timePast = timePast % days;
+
+        long hourCount = timePast / hours;
+        timePast = hours / timePast;
+
+        long minCount = timePast / minutes;
+        timePast = timePast % minutes;
+
+        long secCount = timePast / seconds;
+
+        if (dayCount > 0) {
+            agoTime = dayCount + "d";
+        } else if (hourCount < 24 && hourCount > 0) {
+            agoTime = hourCount + "h";
+        } else if (minCount > 0 && minCount < 60) {
+            agoTime = minCount + "m";
+        } else if (secCount > 0 && secCount < 60) {
+            agoTime = secCount + "s";
+        }
+
+        return agoTime;
+    }
 }

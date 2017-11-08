@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.constraint.ConstraintLayout;
+import android.support.v17.leanback.widget.HorizontalGridView;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +20,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import com.google.firebase.database.DataSnapshot;
@@ -35,8 +38,12 @@ public class PoemFeedFragment extends Fragment{
     private ArrayList<Poem> poems = new ArrayList<>();
     private ProgressBar poemProgress;
     private ArrayList<Poem> searchedPoems = new ArrayList<>();
+    private ArrayList<Stream> streamerList = new ArrayList<>();
     private EditText search;
     private ConstraintLayout layout;
+    private HorizontalGridView streamView;
+    private DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+    private LinearLayout streamLayout;
 
     @Nullable
     @Override
@@ -58,6 +65,9 @@ public class PoemFeedFragment extends Fragment{
         search = (EditText) getActivity().findViewById(R.id.poem_search);
         ImageButton liveStream = (ImageButton) getActivity().findViewById(R.id.live_stream);
         ImageButton writePoem = (ImageButton) getActivity().findViewById(R.id.write_poem);
+        streamView = (HorizontalGridView)getActivity().findViewById(R.id.streamer_view);
+        streamLayout = (LinearLayout)getActivity().findViewById(R.id.stream_layout);
+        streamLayout.setVisibility(View.GONE);
         writePoem.setOnClickListener(mainActions);
         liveStream.setOnClickListener(mainActions);
         search.setOnKeyListener(new View.OnKeyListener() {
@@ -68,11 +78,13 @@ public class PoemFeedFragment extends Fragment{
                         searchPoems(search.getText().toString().toLowerCase());
                     } else {
                         checkConnection();
-                        layout.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.feedBackground));
+                        layout.setBackgroundColor(ContextCompat.getColor(getActivity()
+                                , R.color.feedBackground));
                     }
                     if (getActivity().getCurrentFocus() != null) {
                         InputMethodManager inputManager =
-                                (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                                (InputMethodManager) getActivity()
+                                        .getSystemService(Context.INPUT_METHOD_SERVICE);
                         inputManager.hideSoftInputFromWindow(
                                 getActivity().getCurrentFocus().getWindowToken(),
                                 InputMethodManager.HIDE_NOT_ALWAYS);
@@ -82,6 +94,8 @@ public class PoemFeedFragment extends Fragment{
                 return false;
             }
         });
+
+        seeStreamers();
     }
 
     private final View.OnClickListener mainActions = new View.OnClickListener() {
@@ -102,22 +116,23 @@ public class PoemFeedFragment extends Fragment{
     }
 
     private void grabPoemFeed(){
-        final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         database.child("Poems");
         database.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 poems.clear();
-                Map<String, Object> fbPoems = (Map<String, Object>) dataSnapshot.getChildren().iterator().next().getValue();
+                Map<String, Object> fbPoems =
+                        (Map<String, Object>) dataSnapshot.getChildren().iterator().next().getValue();
                 poemProgress.setVisibility(View.GONE);
                 for(Map.Entry<String, Object> poem : fbPoems.entrySet()) {
                     Map newPoem = (Map)poem.getValue();
                     poems.add(new Poem(newPoem.get("title").toString(), newPoem.get("poem").toString()
                     , newPoem.get("poet").toString(), newPoem.get("date").toString()
                     , newPoem.get("poemId").toString(), newPoem.get("poetId").toString()
-                     , newPoem.get("poetView").toString(), Integer.valueOf(newPoem.get("snapCount").toString())));
-                    refreshPoems();
+                     , newPoem.get("poetView").toString()
+                            ,Integer.valueOf(newPoem.get("snapCount").toString())));
                 }
+                refreshPoems();
             }
 
             @Override
@@ -172,6 +187,40 @@ public class PoemFeedFragment extends Fragment{
                             Toast.LENGTH_SHORT).show();
                 }
             }
+        }
+    }
+
+    private void seeStreamers(){
+        streamerList.clear();
+        database.child("Streams").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getChildrenCount() > 0) {
+                    Map<String, Object> fbStreams = (Map<String, Object>) dataSnapshot.getValue();
+                    for (Map.Entry<String, Object> stream : fbStreams.entrySet()) {
+                        Map newStream = (Map) stream.getValue();
+                        streamerList.add(new Stream(
+                                newStream.get("address").toString(), newStream.get("userIcon").toString()));
+                    }
+                }
+                refreshStreamList();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void refreshStreamList(){
+        if(streamerList.size() > 0) {
+            streamLayout.setVisibility(View.VISIBLE);
+            StreamAdapter streams = new StreamAdapter(streamerList, getActivity());
+            streamView.setAdapter(streams);
+            streams.notifyDataSetChanged();
+        } else {
+            streamLayout.setVisibility(View.GONE);
         }
     }
 }

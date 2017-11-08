@@ -59,41 +59,23 @@ class VenueAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        VenueViewHolder viewHolder;
-
         if(convertView == null) {
             convertView = LayoutInflater.from(mContext)
                     .inflate(R.layout.users_cell,parent,false);
-
-            viewHolder = new VenueViewHolder(convertView);
-
-            convertView.setTag(viewHolder);
-
-        } else {
-            viewHolder = (VenueViewHolder) convertView.getTag();
         }
 
         final Venue venue = (Venue) getItem(position);
-        viewHolder.image.setVisibility(View.VISIBLE);
-        Picasso.with(mContext).load(venue.getVenueLogo()).into(viewHolder.image);
-        viewHolder.title.setTextColor(ContextCompat.getColor(mContext, R.color.blackColor));
-        viewHolder.title.setText(venue.getVenueName());
-        viewHolder.name.setMaxWidth(600);
-        viewHolder.name.setText(venue.getVenueTitle());
+        CircleImageView  image = (CircleImageView) convertView.findViewById(R.id.event_image);
+        TextView title = (TextView)convertView.findViewById(R.id.event_name);
+        TextView name = (TextView)convertView.findViewById(R.id.event_type);
+
+        image.setVisibility(View.VISIBLE);
+        Picasso.with(mContext).load(venue.getVenueLogo()).into(image);
+        title.setTextColor(ContextCompat.getColor(mContext, R.color.blackColor));
+        title.setText(venue.getVenueName());
+        name.setMaxWidth(600);
+        name.setText(venue.getVenueTitle());
 
         return convertView;
     }
-}
-
-class VenueViewHolder {
-    TextView title;
-    TextView name;
-    CircleImageView image;
-
-    VenueViewHolder(View v) {
-        image = (CircleImageView) v.findViewById(R.id.event_image);
-        title = (TextView)v.findViewById(R.id.event_name);
-        name = (TextView)v.findViewById(R.id.event_type);
-    }
-
 }

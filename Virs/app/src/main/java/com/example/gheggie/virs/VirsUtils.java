@@ -17,6 +17,7 @@ class VirsUtils {
     static final String EDIT_PROFILE = "virs.heggie.greg.EDIT-PROFILE-INTENT";
     static final String USER_WITHIN = "virs.heggie.greg.WITHIN-MILES-INTENT";
     static final String VENUE_CLICK = "virs.heggie.greg.VENUE-CLICK-INTENT";
+    static final String STREAM_URL = "virs.heggie.greg.STREAM-URL-INTENT";
 
     static Poet currentPoet = new Poet();
 

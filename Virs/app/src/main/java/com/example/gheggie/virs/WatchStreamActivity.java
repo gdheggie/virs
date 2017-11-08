@@ -1,6 +1,7 @@
 package com.example.gheggie.virs;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
@@ -19,10 +20,18 @@ public class WatchStreamActivity extends AppCompatActivity {
         setContentView(R.layout.activity_watch_stream);
 
         final VideoView vidView = (VideoView)findViewById(R.id.stream_viewer);
-        String vidAddress = "rtsp://192.168.0.188:1935/live/myStream";
-        Uri vidUri = Uri.parse(vidAddress);
-        vidView.setVideoURI(vidUri);
-        vidView.start();
+        Intent viewIntent = getIntent();
+        Stream stream;
+
+        if(viewIntent != null) {
+            if(viewIntent.hasExtra(VirsUtils.STREAM_URL)){
+                stream = (Stream)viewIntent.getSerializableExtra(VirsUtils.STREAM_URL);
+                String vidAddress = stream.getAddress();
+                Uri vidUri = Uri.parse(vidAddress);
+                vidView.setVideoURI(vidUri);
+                vidView.start();
+            }
+        }
 
         dialog = new ProgressDialog(this);
         dialog.setMessage("Connecting to Stream : " + String.valueOf(vidView.getBufferPercentage()) + '%');
