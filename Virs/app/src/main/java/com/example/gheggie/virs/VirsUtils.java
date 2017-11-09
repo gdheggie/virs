@@ -32,16 +32,4 @@ class VirsUtils {
             txtView.setTextColor(ContextCompat.getColor(context, R.color.blackColor));
         }
     }
-
-    static void shareChange(Context context, ImageButton imgButton, TextView txtView) {
-        if (imgButton.getTag().equals(R.drawable.twittershare)) {
-            imgButton.setImageResource(R.drawable.twittershared);
-            imgButton.setTag(R.drawable.twittershared);
-            txtView.setTextColor(ContextCompat.getColor(context, R.color.twitterColor));
-        } else {
-            imgButton.setImageResource(R.drawable.twittershare);
-            imgButton.setTag(R.drawable.twittershare);
-            txtView.setTextColor(ContextCompat.getColor(context, R.color.blackColor));
-        }
-    }
 }

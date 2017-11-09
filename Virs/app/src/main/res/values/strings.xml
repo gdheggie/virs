@@ -69,4 +69,5 @@
     <string name="start_stream">Start Stream</string>
     <string name="end">End Stream</string>
     <string name="x">X</string>
+    <string name="text_to_share">text to image share</string>
 </resources>

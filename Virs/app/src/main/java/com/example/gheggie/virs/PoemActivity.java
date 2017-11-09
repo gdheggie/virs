@@ -7,7 +7,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -22,11 +25,18 @@ import android.widget.Toast;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
+import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.tweetcomposer.ComposerActivity;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -139,7 +149,6 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
             VirsUtils.snapChange(this, snap, snapCount);
             updateSnapCount();
         } else if (v.getId() == R.id.poem_share || v.getId() == R.id.share_label) {
-            VirsUtils.shareChange(this, sharePoem, shareLabel);
             shareToTwitter();
         } else if (upload.getText().equals("Upload Poem")) {
             uploadPoem(newPoem);
@@ -266,7 +275,23 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
 
     private void shareToTwitter(){
         // Share to Twitter
-        Toast.makeText(this, "Feature Coming Soon", Toast.LENGTH_SHORT).show();
+        thePoem.buildDrawingCache();
+        Bitmap image = thePoem.getDrawingCache();
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(getContentResolver(), image, "Title", null);
+
+        Uri imageUri = Uri.parse(path);
+
+        final TwitterSession session = TwitterCore.getInstance().getSessionManager()
+                .getActiveSession();
+        final Intent intent = new ComposerActivity.Builder(PoemActivity.this)
+                .session(session)
+                .image(imageUri)
+                .text("Check out this poem I read on @virsapp !")
+                .hashtags("#Virs")
+                .createIntent();
+        startActivity(intent);
     }
 
     // add poem to snapped list
