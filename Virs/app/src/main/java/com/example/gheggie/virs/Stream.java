@@ -2,7 +2,7 @@ package com.example.gheggie.virs;
 
 import java.io.Serializable;
 
-public class Stream implements Serializable {
+class Stream implements Serializable {
 
     private String address;
     private String userIcon;

@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Map;
 
+@SuppressWarnings("unchecked")
 public class PoemFeedFragment extends Fragment{
 
     private GridView poemGrid;
@@ -155,18 +155,20 @@ public class PoemFeedFragment extends Fragment{
         for(Poem p : poems) {
             if(p.getTitle().toLowerCase().contains(s)) {
                 searchedPoems.add(p);
+            } else if (p.getPoem().toLowerCase().contains(s)){
+                searchedPoems.add(p);
             }
         }
 
         if(searchedPoems != null) {
             if(searchedPoems.size() == 0) {
-                layout.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.whiteColor));
+                Toast.makeText(getActivity(), "No Results Found!", Toast.LENGTH_SHORT).show();
+                grabPoemFeed();
             }
+            CustomAdapter searchAdapter = new CustomAdapter(searchedPoems, getActivity(), "Snapped");
+            poemGrid.setAdapter(searchAdapter);
+            searchAdapter.notifyDataSetChanged();
         }
-
-        CustomAdapter searchAdapter = new CustomAdapter(searchedPoems, getActivity(), "Snapped");
-        poemGrid.setAdapter(searchAdapter);
-        searchAdapter.notifyDataSetChanged();
     }
 
     // check connection them show feed if connection is on

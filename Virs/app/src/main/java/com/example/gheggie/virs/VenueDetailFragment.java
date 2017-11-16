@@ -1,15 +1,10 @@
 package com.example.gheggie.virs;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,18 +15,11 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 public class VenueDetailFragment extends Fragment {
 
     public static final String TAG = "VenueDetailFragment.TAG";
     private Venue venue;
-    ImageView venueImage;
+    private ImageView venueImage;
 
     public static VenueDetailFragment newInstance(Venue venue) {
 

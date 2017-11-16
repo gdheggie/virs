@@ -4,23 +4,15 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.provider.MediaStore;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -30,13 +22,7 @@ import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.tweetcomposer.ComposerActivity;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -49,9 +35,7 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
     private TextView thePoem;
     private ImageButton snap;
     private TextView snapCount;
-    private TextView shareLabel;
     private TextView poemDate;
-    private ImageButton sharePoem;
     private Intent poemIntent;
     private Poem newPoem = null;
     private ImageButton deletePoemButton;
@@ -67,10 +51,10 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
         poemPoet = (TextView) findViewById(R.id.by_text);
         thePoem = (TextView) findViewById(R.id.user_poem);
         snapCount = (TextView) findViewById(R.id.user_snaps);
-        shareLabel = (TextView) findViewById(R.id.share_label);
+        TextView shareLabel = (TextView) findViewById(R.id.share_label);
         poemDate = (TextView) findViewById(R.id.when_text);
         snap = (ImageButton) findViewById(R.id.poem_snap);
-        sharePoem = (ImageButton) findViewById(R.id.poem_share);
+        ImageButton sharePoem = (ImageButton) findViewById(R.id.poem_share);
         poemIntent = getIntent();
         snapCount.setOnClickListener(this);
         snap.setOnClickListener(this);
@@ -235,6 +219,7 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
                     String snaps = newPoem.getSnapCount() + " snaps";
                     snapCount.setText(snaps);
                 }
+
             } else {
                 snapNumber -= 1;
                 newPoem.setSnapCount(snapNumber);
@@ -271,6 +256,7 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
         database.child("Poems").child(newPoem.getPoemId()).setValue(newPoem);
         database.child("Users").child(currentPoet.getUserId()).removeValue();
         database.child("Users").child(currentPoet.getUserId()).setValue(currentPoet);
+
     }
 
     private void shareToTwitter(){
@@ -288,7 +274,7 @@ public class PoemActivity extends AppCompatActivity implements View.OnClickListe
         final Intent intent = new ComposerActivity.Builder(PoemActivity.this)
                 .session(session)
                 .image(imageUri)
-                .text("Check out this poem I read on @virsapp !")
+                .text("Check out this poem I read on @virsapp written " + poemPoet.getText().toString() +"!")
                 .hashtags("#Virs")
                 .createIntent();
         startActivity(intent);

@@ -17,8 +17,6 @@ public class TweetReceiver extends BroadcastReceiver {
         } else if (TweetUploadService.UPLOAD_FAILURE.equals(intent.getAction())) {
             // failed tweet
             Toast.makeText(context, "Tweet Failed to post", Toast.LENGTH_SHORT).show();
-        } else if (TweetUploadService.TWEET_COMPOSE_CANCEL.equals(intent.getAction())) {
-            // cancel
         }
     }
 

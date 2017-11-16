@@ -23,7 +23,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.TwitterAuthProvider;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.DefaultLogger;
@@ -59,11 +58,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         signUpText.setOnClickListener(this);
         progressDialog = new ProgressDialog(this);
         firebaseAuth = FirebaseAuth.getInstance();
-        configTwitterSignIn();
+        if(checkConnection()) {
+            configTwitterSignIn();
+        }
 
         if(firebaseAuth.getCurrentUser() != null) {
             // Start Poem Feed
-            finish();
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
         }
     }
@@ -88,7 +88,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     @Override
                     public void onSuccess(AuthResult authResult) {
                         finish();
-                        startActivity(new Intent(LoginActivity.this, EditActivity.class));
+                        if(firebaseAuth.getCurrentUser() != null) {
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        } else {
+                            startActivity(new Intent(LoginActivity.this, EditActivity.class));
+                        }
                     }
                 }).addOnFailureListener(LoginActivity.this, new OnFailureListener() {
                     @Override

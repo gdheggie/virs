@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -90,7 +89,7 @@ public class NewPoemActivity extends AppCompatActivity implements View.OnClickLi
             poemText.setError("Enter a poem");
         }else {
             String myFormat = "MM/dd/yy-hh:mm:ss";
-            String saveFormat = "MMddyyyhhmmss";
+            String saveFormat = "MMddyyyyhhmmss";
             SimpleDateFormat savedFormat = new SimpleDateFormat(saveFormat, Locale.US);
             SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
             Date date = new Date();

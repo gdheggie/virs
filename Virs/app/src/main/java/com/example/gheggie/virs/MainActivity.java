@@ -24,6 +24,7 @@ import java.util.Map;
 
 import static com.example.gheggie.virs.VirsUtils.currentPoet;
 
+@SuppressWarnings("unchecked")
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();

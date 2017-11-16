@@ -2,7 +2,6 @@ package com.example.gheggie.virs;
 
 import android.content.Context;
 import android.content.Intent;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -165,7 +164,12 @@ class PoemFeedAdapter extends BaseAdapter{
         long secCount = timePast / seconds;
 
         if (dayCount > 0) {
-            agoTime = dayCount + "d";
+            if(dayCount <= 6) {
+                agoTime = dayCount + "d";
+            } else {
+                String poemDate = poemTime.toString();
+                agoTime = poemDate.substring(0,10);
+            }
         } else if (hourCount < 24 && hourCount > 0) {
             agoTime = hourCount + "h";
         } else if (minCount > 0 && minCount < 60) {

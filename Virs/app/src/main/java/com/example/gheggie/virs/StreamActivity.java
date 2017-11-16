@@ -60,7 +60,7 @@ public class StreamActivity extends AppCompatActivity implements WZStatusCallbac
             Manifest.permission.RECORD_AUDIO
     };
 
-    protected GestureDetectorCompat mAutoFocusDetector = null;
+    private GestureDetectorCompat mAutoFocusDetector = null;
 
     private TextView liveText;
     private TextView timerText;

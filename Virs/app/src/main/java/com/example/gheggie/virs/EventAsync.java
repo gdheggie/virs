@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class EventAsync extends AsyncTask<String, String, ArrayList<Venue>> {
+class EventAsync extends AsyncTask<String, String, ArrayList<Venue>> {
 
     private ArrayList<Venue> venueList = new ArrayList<>();
     private Context mContext;

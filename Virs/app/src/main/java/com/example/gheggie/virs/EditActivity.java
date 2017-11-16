@@ -44,11 +44,11 @@ import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-@SuppressWarnings("VisibleForTests")
+@SuppressWarnings({"VisibleForTests", "unchecked"})
 public class EditActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int REQUEST_PHOTO = 0x0111;
-    public CircleImageView crop_view;
+    private CircleImageView crop_view;
     private TextView mUsername;
     private DatabaseReference database = FirebaseDatabase.getInstance().getReference();
     private ArrayList<String> usernames = new ArrayList<>();
@@ -240,7 +240,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void selectPicture() {
+    private void selectPicture() {
         getPermission();
     }
 

@@ -3,12 +3,7 @@ package com.example.gheggie.virs;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -32,9 +27,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -42,6 +34,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.example.gheggie.virs.VirsUtils.currentPoet;
 
+@SuppressWarnings("unchecked")
 public class UserProfileFragment extends Fragment implements View.OnClickListener {
 
     private ListView mUserPoems;
